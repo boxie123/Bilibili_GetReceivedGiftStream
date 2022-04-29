@@ -1,7 +1,10 @@
 import calendar
 import datetime
-import sys
 import os
+import sys
+
+import xlwt
+
 import agent
 
 
@@ -72,6 +75,7 @@ def gift_get(session):
 
 def generate_gift_file(session):
     result_dict = gift_get(session)
+    gift_file_xls(result_dict)
     nowdir = os.getcwd()
     result_file = os.path.join(nowdir, "统计结果.txt")
     file = open(result_file, "w", encoding="utf-8")
@@ -86,3 +90,23 @@ def generate_gift_file(session):
                 line += (date + '\n')
         file.write(line + '\n')
     file.close()
+
+
+def gift_file_xls(gift_dict):
+    wb = xlwt.Workbook()
+    sheet = wb.add_sheet('大航海统计')
+    sheet.write(0, 0, 'ID')
+    sheet.write(0, 1, '大航海类型')
+    sheet.write(0, 2, '时间')
+    row = 1
+    for usr in gift_dict:
+        sheet.write(row, 0, usr)
+        for title in gift_dict[usr]:
+            all_dates = gift_dict[usr][title]
+            if len(all_dates) == 0:
+                continue
+            sheet.write(row, 1, title)
+            for date in all_dates:
+                sheet.write(row, 2, date)
+                row += 1
+    wb.save("大航海统计.xls")
