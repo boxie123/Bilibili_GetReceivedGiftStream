@@ -99,8 +99,16 @@ def gift_file_xls(gift_dict):
     sheet.write(0, 1, '大航海类型')
     sheet.write(0, 2, '时间')
     row = 1
+    sheet1 = wb.add_sheet('积分计算')
+    sheet1.write(0, 0, 'ID')
+    sheet1.write(0, 1, '当月积分')
+    row1 = 1
     for usr in gift_dict:
         sheet.write(row, 0, usr)
+        sheet1.write(row1, 0, usr)
+        scores = len(gift_dict[usr]['舰长']) + 15 * len(gift_dict[usr]['提督']) + 200 * len(gift_dict[usr]['总督'])
+        sheet1.write(row1, 1, scores)
+        row1 += 1
         for title in gift_dict[usr]:
             all_dates = gift_dict[usr][title]
             if len(all_dates) == 0:
