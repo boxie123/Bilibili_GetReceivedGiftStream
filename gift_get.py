@@ -56,12 +56,14 @@ def gift_get(session):
 
         for i in range(gift_num):
             key = gifts[i]["uname"] + " (" + str(gifts[i]["uid"]) + ")"
-            if gifts[i]["gift_id"] == 10001:
-                title = "总督"
-            elif gifts[i]["gift_id"] == 10002:
-                title = "提督"
-            elif gifts[i]["gift_id"] == 10003:
-                title = "舰长"
+            # if gifts[i]["gift_id"] == 10001:
+            #     title = "总督"
+            # elif gifts[i]["gift_id"] == 10002:
+            #     title = "提督"
+            # elif gifts[i]["gift_id"] == 10003:
+            #     title = "舰长"
+            if gifts[i]["gift_name"] in ("舰长", "提督", "总督"):
+                title = gifts[i]["gift_name"]
             else:
                 continue
 
@@ -100,21 +102,24 @@ def gift_file_xls(gift_dict):
     sheet.write(0, 2, '时间')
     row = 1
     sheet1 = wb.add_sheet('积分计算')
-    sheet1.write(0, 0, 'ID')
-    sheet1.write(0, 1, '当月积分')
+    sheet1_head = ['ID', '当月积分', '舰长', '提督', '总督']
+    for i in range(len(sheet1_head)):
+        sheet1.write(0, i, sheet1_head[i])
     row1 = 1
     for usr in gift_dict:
         sheet.write(row, 0, usr)
         sheet1.write(row1, 0, usr)
         scores = len(gift_dict[usr]['舰长']) + 15 * len(gift_dict[usr]['提督']) + 200 * len(gift_dict[usr]['总督'])
         sheet1.write(row1, 1, scores)
-        row1 += 1
         for title in gift_dict[usr]:
             all_dates = gift_dict[usr][title]
+            column = sheet1_head.index(title)
+            sheet1.write(row1, column, len(all_dates))
             if len(all_dates) == 0:
                 continue
             sheet.write(row, 1, title)
             for date in all_dates:
                 sheet.write(row, 2, date)
                 row += 1
+        row1 += 1
     wb.save("大航海统计.xls")
