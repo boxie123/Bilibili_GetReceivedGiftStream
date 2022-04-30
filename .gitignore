@@ -4,3 +4,6 @@ bzcookies.txt
 大航海统计.xls
 *.pyc
 *.pyc
+*.xls
+*.exe
+main.spec
