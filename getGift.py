@@ -2,7 +2,9 @@ import calendar
 import datetime
 import os
 import sys
+
 import xlwt
+
 import agent
 
 
@@ -19,21 +21,20 @@ class GiftInfo:
             day_str = "{}-{:0>2d}-{:0>2d}".format(year, month, i + 1)
             self.day_list.append(day_str)
 
-
     # 获取单月份礼物信息，返回礼物信息字典和{uid: id}字典
     def getGiftInfo(self):
         gift_result = {}
         id_index = {}
         for date in self.day_list:
-            url="https://api.live.bilibili.com/xlive/revenue/v1/giftStream/getReceivedGiftStreamNextList"
-            params={
+            url = "https://api.live.bilibili.com/xlive/revenue/v1/giftStream/getReceivedGiftStreamNextList"
+            params = {
                 "limit": sys.maxsize - 1,
                 "coin_type": 0,
                 "gift_id": "",
                 "begin_time": date,
                 "uname": ""
             }
-            headers={
+            headers = {
                 "User-Agent": agent.get_user_agents(),
                 "Referer": "https://link.bilibili.com/p/center/index"
             }
@@ -53,9 +54,8 @@ class GiftInfo:
                 else:
                     val = {"总督": [], "提督": [], "舰长": [], title: [gift["time"]]}
                     gift_result[key] = val
-        
-        return gift_result, id_index
 
+        return gift_result, id_index
 
     # 根据礼物信息生成txt统计结果
     def generateTxtFile(self):
@@ -74,7 +74,6 @@ class GiftInfo:
                     line += (date + '\n')
             file.write(line + '\n')
         file.close()
-
 
     # 根据礼物信息生成xls统计结果
     def generateXlsFile(self):
@@ -114,7 +113,6 @@ class GiftInfo:
         wb.save(name + ".xls")
 
 
-
 # 专门给鸽宝的统计迄今为止舰长积分
 def aige_score_calc(session):
     now_year = datetime.datetime.today().year
@@ -122,7 +120,7 @@ def aige_score_calc(session):
     score_dict = {}
     id_index_total = {}
     date_str_list = []
-    
+
     for year in range(2021, now_year + 1):
         if year == 2021:
             begin_month = 9
@@ -140,8 +138,8 @@ def aige_score_calc(session):
 
             for usr, value in gift_dict.items():
                 scores = len(gift_dict[usr]['舰长']) + \
-                        15 * len(gift_dict[usr]['提督']) + \
-                        200 * len(gift_dict[usr]['总督'])
+                         15 * len(gift_dict[usr]['提督']) + \
+                         200 * len(gift_dict[usr]['总督'])
 
                 if usr in score_dict:
                     score_dict[usr][date_str] = scores

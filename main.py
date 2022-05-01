@@ -1,7 +1,8 @@
-import login
-import getGift
-import time
 import datetime
+import time
+
+import getGift
+import login
 
 if __name__ == '__main__':
     # 获取用户登录状态
@@ -15,7 +16,7 @@ if __name__ == '__main__':
     print("其中[1]和[2]会之后要求您输入想要查询的年月份")
     while True:
         choice = int(input("请输入数字来使用相对应的功能："))
-        if choice not in [0, 1, 2]: 
+        if choice not in [0, 1, 2]:
             print("无效输入，请重新尝试")
         else:
             break
@@ -39,7 +40,7 @@ if __name__ == '__main__':
             month = datetime.datetime.today().month
         else:
             month = int(month)
-        
+
         gift_info = getGift.GiftInfo(session, year, month)
         print("开始获取大航海信息...")
         if choice == 1:
@@ -48,6 +49,6 @@ if __name__ == '__main__':
         else:
             gift_info.generateXlsFile()
             print("统计结果生成完成！请查看\"{}年{}月大航海统计.xls\"".format(year, month))
-    
+
     # 防止快速退出
     time.sleep(5)
