@@ -13,10 +13,11 @@ if __name__ == '__main__':
     print("[0] 生成近5个月所有人的大航海积分xls表格")
     print("[1] 生成输入年份和月份的大航海信息记录（txt格式）")
     print("[2] 生成输入年份和月份的大航海信息记录（xls格式）")
-    print("其中[1]和[2]会之后要求您输入想要查询的年月份")
+    print("[3] 生成可直接导入BiliMessenger使用的数据列表（csv格式）")
+    print("其中[1]、[2]和[3]会之后要求您输入想要查询的年月份")
     while True:
         choice = int(input("请输入数字来使用相对应的功能："))
-        if choice not in [0, 1, 2]:
+        if choice not in [0, 1, 2, 3]:
             print("无效输入，请重新尝试")
         else:
             break
@@ -46,9 +47,12 @@ if __name__ == '__main__':
         if choice == 1:
             gift_info.generateTxtFile()
             print("统计结果生成完成！请查看\"{}年{}月大航海统计.txt\"".format(year, month))
-        else:
+        elif choice == 2:
             gift_info.generateXlsFile()
             print("统计结果生成完成！请查看\"{}年{}月大航海统计.xls\"".format(year, month))
+        else:
+            gift_info.generateCsvFile()
+            print("统计结果生成完成！请查看\"{}年{}月大航海统计.csv\"".format(year, month))
 
     # 防止快速退出
     time.sleep(5)

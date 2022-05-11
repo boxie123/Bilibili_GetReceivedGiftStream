@@ -1,4 +1,5 @@
 import calendar
+import csv
 import datetime
 import os
 import sys
@@ -111,6 +112,26 @@ class GiftInfo:
                     row += 1
             row1 += 1
         wb.save(name + ".xls")
+
+    # 根据礼物信息生成csv统计结果，可直接导入BiliMessenger使用
+    def generateCsvFile(self):
+        gift_dict, id_index = self.getGiftInfo()
+        csv_list = []
+        for uid, gifts in gift_dict.items():
+            usr_name = id_index[uid]
+            gifts_name = ""
+            gifts_list = ["舰长", "提督", "总督"]
+            for i in gifts_list:
+                if gifts[i]:
+                    gifts_name = i
+
+            row_list = [gifts_name, uid, usr_name]
+            csv_list.append(row_list)
+
+        name = "{}年{}月大航海统计".format(self.year, self.month)
+        with open(name + ".csv", mode="w", encoding="utf-8-sig", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerows(csv_list)
 
 
 # 专门给鸽宝的统计迄今为止舰长积分
