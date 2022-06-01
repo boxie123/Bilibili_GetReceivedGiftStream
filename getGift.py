@@ -1,6 +1,7 @@
 import calendar
 import csv
 import datetime
+import json
 import os
 import sys
 
@@ -57,6 +58,77 @@ class GiftInfo:
                     gift_result[key] = val
 
         return gift_result, id_index
+
+    # 获取单日礼物信息，生成表格
+    def getGiftInfoOneDay(self):
+        day = input("请输入想查询的日期（直接回车默认今日）：")
+        if day == "":
+            day = datetime.datetime.today().day
+        else:
+            day = int(day)
+
+        day_str = "{}-{:0>2d}-{:0>2d}".format(self.year, self.month, day)
+
+        gift_result = {}
+        id_index = {}
+
+        url = "https://api.live.bilibili.com/xlive/revenue/v1/giftStream/getReceivedGiftStreamNextList"
+        params = {
+            "limit": sys.maxsize - 1,
+            "coin_type": 0,
+            "gift_id": "",
+            "begin_time": day_str,
+            "uname": ""
+        }
+        headers = {
+            "User-Agent": agent.get_user_agents(),
+            "Referer": "https://link.bilibili.com/p/center/index"
+        }
+
+        all_info = self.session.get(url=url, params=params, headers=headers).json()
+        gifts = all_info["data"]["list"]
+
+        # with open("temp.json", "w", encoding="utf-8") as f:
+        #     json.dump(gifts, f, ensure_ascii=False, indent=4)
+
+        for gift in gifts:
+            key = str(gift["uid"])
+            id_index[key] = gift["uname"]
+            title = gift["gift_name"]
+            gold = gift["normal_gold"] / 100
+
+            if key in gift_result:
+                if title in gift_result[key]:
+                    gift_result[key][title] += gold
+                else:
+                    gift_result[key][title] = gold
+            else:
+                val = {title: gold}
+                gift_result[key] = val
+
+        wb = xlwt.Workbook()
+        name = "{}年{}月{}日礼物统计".format(self.year, self.month, day)
+        sheet = wb.add_sheet(name)
+        sheet_header_list = ['ID', 'UID']
+        row = 1
+
+        for usr in gift_result:
+            sheet.write(row, 1, usr)
+            sheet.write(row, 0, id_index[usr])
+            for title in gift_result[usr]:
+                if title not in sheet_header_list:
+                    sheet_header_list.append(title)
+
+                column = sheet_header_list.index(title)
+                sheet.write(row, column, gift_result[usr][title])
+
+            row += 1
+
+        for i in range(len(sheet_header_list)):
+            sheet.write(0, i, sheet_header_list[i])
+
+        wb.save(name + ".xls")
+        print("统计结果生成完成！请查看\"{}.xls\"".format(name))
 
     # 根据礼物信息生成txt统计结果
     def generateTxtFile(self):
