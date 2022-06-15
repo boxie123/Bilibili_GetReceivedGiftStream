@@ -14,7 +14,7 @@ if __name__ == '__main__':
     print("[1] 生成输入年份和月份的大航海信息记录（txt格式）")
     print("[2] 生成输入年份和月份的大航海信息记录（xls格式）")
     print("[3] 生成可直接导入BiliMessenger使用的数据列表（csv格式）")
-    print("[4] 生成某月指定某段时间收到所有礼物流水列表（xls格式）")
+    print("[4] 生成指定某段时间收到所有礼物流水列表（xls格式）")
     print("其中[1]、[2]、[3]和[4]会之后要求您输入想要查询的年月份")
     while True:
         choice = int(input("请输入数字来使用相对应的功能："))
@@ -44,14 +44,16 @@ if __name__ == '__main__':
             month = int(month)
 
         gift_info = getGift.GiftInfo(session, year, month)
-        print("开始获取大航海信息...")
         if choice == 1:
+            print("开始获取大航海信息...")
             gift_info.generateTxtFile()
             print("统计结果生成完成！请查看\"{}年{}月大航海统计.txt\"".format(year, month))
         elif choice == 2:
+            print("开始获取大航海信息...")
             gift_info.generateXlsFile()
             print("统计结果生成完成！请查看\"{}年{}月大航海统计.xls\"".format(year, month))
         elif choice == 3:
+            print("开始获取大航海信息...")
             gift_info.generateCsvFile()
             print("统计结果生成完成！请查看\"{}年{}月大航海统计.csv\"".format(year, month))
         else:

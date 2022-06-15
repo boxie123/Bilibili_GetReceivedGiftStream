@@ -19,6 +19,8 @@ class GiftInfo:
         self.day_list = []
         self.day_begin = 0
         self.day_end = 0
+        self.month_end = 0
+        self.year_end = 0
 
         day_num = calendar.monthrange(year, month)[1]
         for i in range(day_num):
@@ -61,7 +63,7 @@ class GiftInfo:
 
         return gift_result, id_index
 
-    # 获取单日礼物信息，生成表格
+    # 获取某一段时间礼物信息，生成表格
     def getGiftInfoOneDay(self):
         day_begin = input("请输入想查询的开始日期（直接回车默认今日）：")
         if day_begin == "":
@@ -69,15 +71,32 @@ class GiftInfo:
         else:
             self.day_begin = int(day_begin)
 
+        year_end = input("请输入想查询的结束年份（直接回车默认今年）：")
+        month_end = input("请输入想查询的结束月份（直接回车默认本月）：")
         day_end = input("请输入想查询的结束日期（直接回车默认今日）：")
+        print("开始获取大航海信息...")
         if day_end == "":
             self.day_end = datetime.datetime.today().day
         else:
             self.day_end = int(day_end)
 
+        if month_end == "":
+            self.month_end = datetime.datetime.today().month
+        else:
+            self.month_end = int(month_end)
+
+        if year_end == "":
+            self.year_end = datetime.datetime.today().year
+        else:
+            self.year_end = int(year_end)
+
+        date_begin = datetime.date(self.year, self.month, self.day_begin)
+        date_end = datetime.date(self.year_end, self.month_end, self.day_end)
         day_list_range = []
-        for i in range(self.day_begin, self.day_end + 1):
-            day_str = "{}-{:0>2d}-{:0>2d}".format(self.year, self.month, i)
+        delta = datetime.timedelta(days=1)
+        while date_begin <= date_end:
+            date_begin += delta
+            day_str = date_begin.strftime('%Y-%m-%d')
             day_list_range.append(day_str)
 
         gift_result = {}
@@ -119,7 +138,8 @@ class GiftInfo:
     # 写入xls文件
     def xlsWrite(self, gift_result, id_index):
         wb = xlwt.Workbook()
-        name = "{}年{}月{}日至{}日礼物统计".format(self.year, self.month, self.day_begin, self.day_end)
+        name = "{}年{}月{}日至{}年{}月{}日礼物统计".format(self.year, self.month, self.day_begin,
+                                                self.year_end, self.month_end, self.day_end)
         sheet = wb.add_sheet(name)
         sheet_header_list = ['ID', 'UID']
         row = 1
