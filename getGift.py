@@ -199,6 +199,9 @@ class GiftInfo:
         style.alignment.wrap = 1
         sheet = wb.add_sheet(self.name)
         sheet_header_list = ['ID', 'UID', '舰长', '提督', '总督']
+        sheet.col(2).width = 256 * 25
+        sheet.col(3).width = 256 * 25
+        sheet.col(4).width = 256 * 25
         for i in range(len(sheet_header_list)):
             sheet.write(0, i, sheet_header_list[i])
         row = 1
