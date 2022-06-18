@@ -1,7 +1,5 @@
-import calendar
 import csv
 import datetime
-import json
 import os
 import sys
 
@@ -12,22 +10,18 @@ import agent
 
 class GiftInfo:
     # 构造函数
-    def __init__(self, session, year, month):
+    def __init__(self, session):
         self.session = session
-        self.year = year
-        self.month = month
+        self.year_begin = 0
+        self.month_begin = 0
         self.day_list = []
         self.day_begin = 0
         self.day_end = 0
         self.month_end = 0
         self.year_end = 0
+        self.name = ""
 
-        day_num = calendar.monthrange(year, month)[1]
-        for i in range(day_num):
-            day_str = "{}-{:0>2d}-{:0>2d}".format(year, month, i + 1)
-            self.day_list.append(day_str)
-
-    # 获取单月份礼物信息，返回礼物信息字典和{uid: id}字典
+    # 获取礼物信息，返回大航海礼物信息字典和{uid: id}字典
     def getGiftInfo(self):
         gift_result = {}
         id_index = {}
@@ -63,8 +57,20 @@ class GiftInfo:
 
         return gift_result, id_index
 
-    # 获取某一段时间礼物信息，生成表格
-    def getGiftInfoOneDay(self):
+    # 生成特定格式的日期列表
+    def period_time(self):
+        year_begin = input("请输入想查询的开始年份（直接回车默认今年）：")
+        if year_begin == "":
+            self.year_begin = datetime.datetime.today().year
+        else:
+            self.year_begin = int(year_begin)
+
+        month_begin = input("请输入想查询的开始月份（直接回车默认本月）：")
+        if month_begin == "":
+            self.month_begin = datetime.datetime.today().month
+        else:
+            self.month_begin = int(month_begin)
+
         day_begin = input("请输入想查询的开始日期（直接回车默认今日）：")
         if day_begin == "":
             self.day_begin = datetime.datetime.today().day
@@ -72,36 +78,41 @@ class GiftInfo:
             self.day_begin = int(day_begin)
 
         year_end = input("请输入想查询的结束年份（直接回车默认今年）：")
-        month_end = input("请输入想查询的结束月份（直接回车默认本月）：")
-        day_end = input("请输入想查询的结束日期（直接回车默认今日）：")
-        print("开始获取大航海信息...")
-        if day_end == "":
-            self.day_end = datetime.datetime.today().day
-        else:
-            self.day_end = int(day_end)
-
-        if month_end == "":
-            self.month_end = datetime.datetime.today().month
-        else:
-            self.month_end = int(month_end)
-
         if year_end == "":
             self.year_end = datetime.datetime.today().year
         else:
             self.year_end = int(year_end)
 
-        date_begin = datetime.date(self.year, self.month, self.day_begin)
+        month_end = input("请输入想查询的结束月份（直接回车默认本月）：")
+        if month_end == "":
+            self.month_end = datetime.datetime.today().month
+        else:
+            self.month_end = int(month_end)
+
+        day_end = input("请输入想查询的结束日期（直接回车默认今日）：")
+        if day_end == "":
+            self.day_end = datetime.datetime.today().day
+        else:
+            self.day_end = int(day_end)
+
+        date_begin = datetime.date(self.year_begin, self.month_begin, self.day_begin)
         date_end = datetime.date(self.year_end, self.month_end, self.day_end)
         day_list_range = []
         delta = datetime.timedelta(days=1)
         while date_begin <= date_end:
-            date_begin += delta
             day_str = date_begin.strftime('%Y-%m-%d')
             day_list_range.append(day_str)
+            date_begin += delta
 
+        self.day_list = day_list_range
+        self.name = "{}年{}月{}日至{}年{}月{}日礼物统计".format(self.year_begin, self.month_begin, self.day_begin,
+                                                     self.year_end, self.month_end, self.day_end)
+
+    # 获取某一段时间礼物信息，返回礼物信息字典和{uid: id}字典
+    def getGiftInfoOneDay(self):
         gift_result = {}
         id_index = {}
-        for date in day_list_range:
+        for date in self.day_list:
             url = "https://api.live.bilibili.com/xlive/revenue/v1/giftStream/getReceivedGiftStreamNextList"
             params = {
                 "limit": sys.maxsize - 1,
@@ -133,14 +144,13 @@ class GiftInfo:
                     val = {title: gold}
                     gift_result[key] = val
 
-        self.xlsWrite(gift_result, id_index)
+        return gift_result, id_index
 
     # 写入xls文件
-    def xlsWrite(self, gift_result, id_index):
-        wb = xlwt.Workbook()
-        name = "{}年{}月{}日至{}年{}月{}日礼物统计".format(self.year, self.month, self.day_begin,
-                                                self.year_end, self.month_end, self.day_end)
-        sheet = wb.add_sheet(name)
+    def xlsWrite(self):
+        gift_result, id_index = self.getGiftInfoOneDay()
+        wb = xlwt.Workbook(encoding="utf-8")
+        sheet = wb.add_sheet(self.name)
         sheet_header_list = ['ID', 'UID']
         row = 1
 
@@ -159,14 +169,14 @@ class GiftInfo:
         for i in range(len(sheet_header_list)):
             sheet.write(0, i, sheet_header_list[i])
 
-        wb.save(name + ".xls")
-        print("统计结果生成完成！请查看\"{}.xls\"".format(name))
+        wb.save(self.name + ".xls")
+        print("统计结果生成完成！请查看\"{}.xls\"".format(self.name))
 
-    # 根据礼物信息生成txt统计结果
+    # 根据大航海礼物信息生成txt统计结果
     def generateTxtFile(self):
         gift_dict, id_index = self.getGiftInfo()
         nowdir = os.getcwd()
-        result_file = os.path.join(nowdir, "{}年{}月大航海统计.txt".format(self.year, self.month))
+        result_file = os.path.join(nowdir, self.name + ".txt")
         file = open(result_file, "w", encoding="utf-8")
         for usr in gift_dict:
             line = "========== " + id_index[usr] + "(" + usr + ") 的大航海 ==========\n"
@@ -179,14 +189,16 @@ class GiftInfo:
                     line += (date + '\n')
             file.write(line + '\n')
         file.close()
+        print("统计结果生成完成！请查看\"{}.txt\"".format(self.name))
 
-    # 根据礼物信息生成xls统计结果
+    # 根据大航海礼物信息生成xls统计结果
     def generateXlsFile(self):
         gift_dict, id_index = self.getGiftInfo()
-        wb = xlwt.Workbook()
-        name = "{}年{}月大航海统计".format(self.year, self.month)
-        sheet = wb.add_sheet(name)
-        sheet_header_list = ['ID', 'UID', '大航海类型', '时间']
+        wb = xlwt.Workbook(encoding="utf-8")
+        style = xlwt.XFStyle()
+        style.alignment.wrap = 1
+        sheet = wb.add_sheet(self.name)
+        sheet_header_list = ['ID', 'UID', '舰长', '提督', '总督']
         for i in range(len(sheet_header_list)):
             sheet.write(0, i, sheet_header_list[i])
         row = 1
@@ -204,18 +216,19 @@ class GiftInfo:
             sheet1.write(row1, 2, scores)
             for title in gift_dict[usr]:
                 all_dates = gift_dict[usr][title]
-                column = sheet1_head.index(title)
-                sheet1.write(row1, column, len(all_dates))
+                column1 = sheet1_head.index(title)
+                sheet1.write(row1, column1, len(all_dates))
                 if len(all_dates) == 0:
                     continue
-                for date in all_dates:
-                    sheet.write(row, 1, usr)
-                    sheet.write(row, 0, id_index[usr])
-                    sheet.write(row, 2, title)
-                    sheet.write(row, 3, date)
-                    row += 1
+                sheet.write(row, 1, usr)
+                sheet.write(row, 0, id_index[usr])
+                column = sheet_header_list.index(title)
+                time_str = "\n".join(all_dates)
+                sheet.write(row, column, time_str, style)
+            row += 1
             row1 += 1
-        wb.save(name + ".xls")
+        wb.save(self.name + "(大航海).xls")
+        print("统计结果生成完成！请查看\"{}(大航海).xls\"".format(self.name))
 
     # 根据礼物信息生成csv统计结果，可直接导入BiliMessenger使用
     def generateCsvFile(self):
@@ -232,60 +245,7 @@ class GiftInfo:
             row_list = [gifts_name, uid, usr_name]
             csv_list.append(row_list)
 
-        name = "{}年{}月大航海统计".format(self.year, self.month)
-        with open(name + ".csv", mode="w", encoding="utf-8-sig", newline="") as f:
+        with open(self.name + "(大航海).csv", mode="w", encoding="utf-8-sig", newline="") as f:
             writer = csv.writer(f)
             writer.writerows(csv_list)
-
-
-# 专门给鸽宝的统计迄今为止舰长积分
-def aige_score_calc(session):
-    now_year = datetime.datetime.today().year
-    now_month = datetime.datetime.today().month
-    score_dict = {}
-    id_index_total = {}
-    date_str_list = []
-
-    for year in range(2021, now_year + 1):
-        if year == 2021:
-            begin_month = 9
-            end_month = 12
-        else:
-            begin_month = 1
-            end_month = now_month
-
-        for month in range(begin_month, end_month + 1):
-            date_str = "-".join((str(year), str(month)))
-            date_str_list.append(date_str)
-            temp_gift_info = GiftInfo(session, year, month)
-            gift_dict, id_index = temp_gift_info.getGiftInfo()
-            id_index_total.update(id_index)
-
-            for usr, value in gift_dict.items():
-                scores = len(gift_dict[usr]['舰长']) + \
-                         15 * len(gift_dict[usr]['提督']) + \
-                         200 * len(gift_dict[usr]['总督'])
-
-                if usr in score_dict:
-                    score_dict[usr][date_str] = scores
-                else:
-                    score_dict[usr] = {date_str: scores}
-
-    wb = xlwt.Workbook()
-    sheet = wb.add_sheet('艾鸽积分')
-    sheet.write(0, 0, "ID")
-    sheet.write(0, 1, "UID")
-    for i in range(len(date_str_list)):
-        sheet.write(0, i + 2, date_str_list[i])
-
-    row = 1
-    for usr in score_dict:
-        sheet.write(row, 1, usr)
-        sheet.write(row, 0, id_index_total[usr])
-        for i in range(len(date_str_list)):
-            if date_str_list[i] in score_dict[usr]:
-                sheet.write(row, i + 2, score_dict[usr][date_str_list[i]])
-            else:
-                sheet.write(row, i + 2, 0)
-        row += 1
-    wb.save("艾鸽积分.xls")
+        print("统计结果生成完成！请查看\"{}(大航海).csv\"".format(self.name))
