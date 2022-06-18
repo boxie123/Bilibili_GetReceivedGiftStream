@@ -1,7 +1,6 @@
-import time
-
 import getGift
 import login
+import up_to_date
 
 if __name__ == '__main__':
     # 获取用户登录状态
@@ -36,5 +35,8 @@ if __name__ == '__main__':
     else:
         gift_info.xlsWrite()
 
+    # 检测更新
+    up_to_date.main("v0.5.2")
+
     # 防止快速退出
-    time.sleep(5)
+    input("\n\n按回车退出程序")
