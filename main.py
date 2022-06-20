@@ -37,7 +37,7 @@ if __name__ == '__main__':
         asyncio.run(gift_info.xlsWrite())
 
     # 检测更新
-    up_to_date.main("v0.5.2")
+    up_to_date.main("v0.6.1")
 
     # 防止快速退出
     input("\n\n按回车退出程序")

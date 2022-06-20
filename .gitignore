@@ -156,3 +156,4 @@ cython_debug/
 *.xls
 *.csv
 *.ico
+*.json
