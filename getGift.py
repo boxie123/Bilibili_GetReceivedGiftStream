@@ -3,6 +3,7 @@ import datetime
 import os
 import sys
 
+import aiohttp
 import xlwt
 
 import agent
@@ -10,8 +11,8 @@ import agent
 
 class GiftInfo:
     # 构造函数
-    def __init__(self, session):
-        self.session = session
+    def __init__(self, cookies):
+        self.cookies = cookies
         self.year_begin = 0
         self.month_begin = 0
         self.day_list = []
@@ -20,42 +21,6 @@ class GiftInfo:
         self.month_end = 0
         self.year_end = 0
         self.name = ""
-
-    # 获取礼物信息，返回大航海礼物信息字典和{uid: id}字典
-    def getGiftInfo(self):
-        gift_result = {}
-        id_index = {}
-        for date in self.day_list:
-            url = "https://api.live.bilibili.com/xlive/revenue/v1/giftStream/getReceivedGiftStreamNextList"
-            params = {
-                "limit": sys.maxsize - 1,
-                "coin_type": 0,
-                "gift_id": "",
-                "begin_time": date,
-                "uname": ""
-            }
-            headers = {
-                "User-Agent": agent.get_user_agents(),
-                "Referer": "https://link.bilibili.com/p/center/index"
-            }
-            all_info = self.session.get(url=url, params=params, headers=headers).json()
-            gifts = all_info["data"]["list"]
-
-            for gift in gifts:
-                key = str(gift["uid"])
-                id_index[key] = gift["uname"]
-                if gift["gift_name"] in ("舰长", "提督", "总督"):
-                    title = gift["gift_name"]
-                else:
-                    continue
-
-                if key in gift_result:
-                    gift_result[key][title].insert(0, gift["time"])
-                else:
-                    val = {"总督": [], "提督": [], "舰长": [], title: [gift["time"]]}
-                    gift_result[key] = val
-
-        return gift_result, id_index
 
     # 生成特定格式的日期列表
     def period_time(self):
@@ -108,73 +73,126 @@ class GiftInfo:
         self.name = "{}年{}月{}日至{}年{}月{}日礼物统计".format(self.year_begin, self.month_begin, self.day_begin,
                                                      self.year_end, self.month_end, self.day_end)
 
-    # 获取某一段时间礼物信息，返回礼物信息字典和{uid: id}字典
-    def getGiftInfoOneDay(self):
-        gift_result = {}
+    # 获取某一段时间礼物信息
+    async def getGiftInfoOneDay(self):
+        url = "https://api.live.bilibili.com/xlive/revenue/v1/giftStream/getReceivedGiftStreamNextList"
+        headers = {
+            "User-Agent": agent.get_user_agents(),
+            "Referer": "https://link.bilibili.com/p/center/index"
+        }
+        all_gifts_list = []
+        async with aiohttp.ClientSession(
+                cookies=self.cookies,
+                headers=headers
+        ) as session:
+            for date in self.day_list:
+                params = {
+                    "limit": sys.maxsize - 1,
+                    "coin_type": 0,
+                    "gift_id": "",
+                    "begin_time": date,
+                    "uname": ""
+                }
+                async with session.get(url, params=params) as resp:
+                    all_info = await resp.json()
+                    gifts_list = all_info["data"]["list"]
+                    all_gifts_list.extend(gifts_list)
+
+        return all_gifts_list
+
+    # 处理全部礼物数据生成dict
+    async def all_info_handle(self):
+        gifts_list = await self.getGiftInfoOneDay()
         id_index = {}
-        for date in self.day_list:
-            url = "https://api.live.bilibili.com/xlive/revenue/v1/giftStream/getReceivedGiftStreamNextList"
-            params = {
-                "limit": sys.maxsize - 1,
-                "coin_type": 0,
-                "gift_id": "",
-                "begin_time": date,
-                "uname": ""
-            }
-            headers = {
-                "User-Agent": agent.get_user_agents(),
-                "Referer": "https://link.bilibili.com/p/center/index"
-            }
+        gift_result = {}
+        for gift in gifts_list:
+            key = str(gift["uid"])
+            id_index[key] = gift["uname"]
+            gift_name = gift["gift_name"]
+            gift_id = gift["gift_id"]
+            gold = gift["normal_gold"] / 100
+            gift_num = gift["gift_num"]
+            time = gift["time"]
 
-            all_info = self.session.get(url=url, params=params, headers=headers).json()
-            gifts = all_info["data"]["list"]
-
-            for gift in gifts:
-                key = str(gift["uid"])
-                id_index[key] = gift["uname"]
-                title = gift["gift_name"]
-                gold = gift["normal_gold"] / 100
-
-                if key in gift_result:
-                    if title in gift_result[key]:
-                        gift_result[key][title] += gold
-                    else:
-                        gift_result[key][title] = gold
+            if key in gift_result:
+                if gift_id in gift_result[key]:
+                    gift_result[key][gift_id]["gold"] += gold
+                    gift_result[key][gift_id]["gift_num"] += gift_num
+                    gift_result[key][gift_id]["time"].insert(0, gift["time"])
                 else:
-                    val = {title: gold}
-                    gift_result[key] = val
+                    gift_result[key][gift_id] = {
+                        "gift_name": gift_name,
+                        "gold": gold,
+                        "gift_num": gift_num,
+                        "time": [time]
+                    }
+            else:
+                gift_result[key] = {
+                    gift_id: {
+                        "gift_name": gift_name,
+                        "gold": gold,
+                        "gift_num": gift_num,
+                        "time": [time]
+                    }
+                }
+        return gift_result, id_index
+
+    # 处理礼物信息生成大航海字典以及{uid:name}字典
+    async def guard_info(self):
+        gifts_list = await self.getGiftInfoOneDay()
+        id_index = {}
+        gift_result = {}
+        for gift in gifts_list:
+            key = str(gift["uid"])
+            id_index[key] = gift["uname"]
+            if gift["gift_name"] in ("舰长", "提督", "总督"):
+                title = gift["gift_name"]
+            else:
+                continue
+
+            if key in gift_result:
+                gift_result[key][title].insert(0, gift["time"])
+            else:
+                val = {"总督": [], "提督": [], "舰长": [], title: [gift["time"]]}
+                gift_result[key] = val
 
         return gift_result, id_index
 
-    # 写入xls文件
-    def xlsWrite(self):
-        gift_result, id_index = self.getGiftInfoOneDay()
+    # 全部礼物信息写入xls文件
+    async def xlsWrite(self):
+        gift_result, id_index = await self.all_info_handle()
         wb = xlwt.Workbook(encoding="utf-8")
-        sheet = wb.add_sheet(self.name)
+        sheet = wb.add_sheet("电池数量")
+        sheet_num = wb.add_sheet("数目")
         sheet_header_list = ['ID', 'UID']
-        row = 1
-
-        for usr in gift_result:
-            sheet.write(row, 1, usr)
-            sheet.write(row, 0, id_index[usr])
-            for title in gift_result[usr]:
-                if title not in sheet_header_list:
-                    sheet_header_list.append(title)
-
-                column = sheet_header_list.index(title)
-                sheet.write(row, column, gift_result[usr][title])
-
-            row += 1
-
         for i in range(len(sheet_header_list)):
             sheet.write(0, i, sheet_header_list[i])
+            sheet_num.write(0, i, sheet_header_list[i])
+
+        row = 1
+        for uid in gift_result:
+            sheet.write(row, 1, uid)
+            sheet.write(row, 0, id_index[uid])
+            sheet_num.write(row, 1, uid)
+            sheet_num.write(row, 0, id_index[uid])
+            for gift_id in gift_result[uid]:
+                if gift_id not in sheet_header_list:
+                    sheet_header_list.append(gift_id)
+                    column = sheet_header_list.index(gift_id)
+                    gift_name = gift_result[uid][gift_id]["gift_name"]
+                    sheet.write(0, column, f"{gift_name}(id:{gift_id})")
+                    sheet_num.write(0, column, f"{gift_name}(id:{gift_id})")
+                column = sheet_header_list.index(gift_id)
+                sheet.write(row, column, gift_result[uid][gift_id]["gold"])
+                sheet_num.write(row, column, gift_result[uid][gift_id]["gift_num"])
+            row += 1
 
         wb.save(self.name + ".xls")
         print("统计结果生成完成！请查看\"{}.xls\"".format(self.name))
 
     # 根据大航海礼物信息生成txt统计结果
-    def generateTxtFile(self):
-        gift_dict, id_index = self.getGiftInfo()
+    async def generateTxtFile(self):
+        gift_dict, id_index = await self.guard_info()
         nowdir = os.getcwd()
         result_file = os.path.join(nowdir, self.name + ".txt")
         file = open(result_file, "w", encoding="utf-8")
@@ -192,50 +210,52 @@ class GiftInfo:
         print("统计结果生成完成！请查看\"{}.txt\"".format(self.name))
 
     # 根据大航海礼物信息生成xls统计结果
-    def generateXlsFile(self):
-        gift_dict, id_index = self.getGiftInfo()
+    async def generateXlsFile(self):
+        guard_dict, id_index = await self.guard_info()
         wb = xlwt.Workbook(encoding="utf-8")
         style = xlwt.XFStyle()
         style.alignment.wrap = 1
-        sheet = wb.add_sheet(self.name)
+        sheet = wb.add_sheet('上舰时间')
         sheet_header_list = ['ID', 'UID', '舰长', '提督', '总督']
-        sheet.col(2).width = 256 * 25
-        sheet.col(3).width = 256 * 25
-        sheet.col(4).width = 256 * 25
+
         for i in range(len(sheet_header_list)):
             sheet.write(0, i, sheet_header_list[i])
+            if i > 1:
+                sheet.col(i).width = 256 * 25
         row = 1
 
         sheet1 = wb.add_sheet('积分计算')
-        sheet1_head = ['ID', 'UID', '当月积分', '舰长', '提督', '总督']
+        sheet1_head = ['ID', 'UID', '总积分', '舰长', '提督', '总督']
         for i in range(len(sheet1_head)):
             sheet1.write(0, i, sheet1_head[i])
         row1 = 1
 
-        for usr in gift_dict:
-            sheet1.write(row1, 1, usr)
-            sheet1.write(row1, 0, id_index[usr])
-            scores = len(gift_dict[usr]['舰长']) + 15 * len(gift_dict[usr]['提督']) + 200 * len(gift_dict[usr]['总督'])
+        for uid in guard_dict:
+            scores = len(guard_dict[uid]['舰长']) + 15 * len(guard_dict[uid]['提督']) \
+                     + 200 * len(guard_dict[uid]['总督'])
+            sheet.write(row, 1, uid)
+            sheet.write(row, 0, id_index[uid])
+            sheet1.write(row1, 1, uid)
+            sheet1.write(row1, 0, id_index[uid])
             sheet1.write(row1, 2, scores)
-            for title in gift_dict[usr]:
-                all_dates = gift_dict[usr][title]
+            for title in guard_dict[uid]:
+                all_dates = guard_dict[uid][title]
                 column1 = sheet1_head.index(title)
                 sheet1.write(row1, column1, len(all_dates))
                 if len(all_dates) == 0:
                     continue
-                sheet.write(row, 1, usr)
-                sheet.write(row, 0, id_index[usr])
                 column = sheet_header_list.index(title)
                 time_str = "\n".join(all_dates)
                 sheet.write(row, column, time_str, style)
             row += 1
             row1 += 1
+
         wb.save(self.name + "(大航海).xls")
         print("统计结果生成完成！请查看\"{}(大航海).xls\"".format(self.name))
 
     # 根据礼物信息生成csv统计结果，可直接导入BiliMessenger使用
-    def generateCsvFile(self):
-        gift_dict, id_index = self.getGiftInfo()
+    async def generateCsvFile(self):
+        gift_dict, id_index = await self.guard_info()
         csv_list = []
         for uid, gifts in gift_dict.items():
             usr_name = id_index[uid]

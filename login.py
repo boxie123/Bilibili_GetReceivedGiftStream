@@ -83,4 +83,6 @@ def bzlogin():
                 print('其他：', qrcodedata)
             time.sleep(2)
         session.cookies.save()
-    return session
+
+    cookies_dict = requests.utils.dict_from_cookiejar(session.cookies)
+    return cookies_dict

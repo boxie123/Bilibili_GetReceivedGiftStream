@@ -1,10 +1,11 @@
 import getGift
 import login
 import up_to_date
+import asyncio
 
 if __name__ == '__main__':
     # 获取用户登录状态
-    session = login.bzlogin()
+    cookies = login.bzlogin()
 
     # 询问用户使用什么功能
     print("\n本程序目前拥有的功能：")
@@ -23,17 +24,17 @@ if __name__ == '__main__':
     # 使用功能
     print("==========================================")
 
-    gift_info = getGift.GiftInfo(session)
+    gift_info = getGift.GiftInfo(cookies)
     gift_info.period_time()
     print("开始获取礼物信息...")
     if choice == 1:
-        gift_info.generateTxtFile()
+        asyncio.run(gift_info.generateTxtFile())
     elif choice == 2:
-        gift_info.generateXlsFile()
+        asyncio.run(gift_info.generateXlsFile())
     elif choice == 3:
-        gift_info.generateCsvFile()
+        asyncio.run(gift_info.generateCsvFile())
     else:
-        gift_info.xlsWrite()
+        asyncio.run(gift_info.xlsWrite())
 
     # 检测更新
     up_to_date.main("v0.5.2")
