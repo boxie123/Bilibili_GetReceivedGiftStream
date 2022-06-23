@@ -1,6 +1,5 @@
 import csv
 import datetime
-import os
 import sys
 
 import aiohttp
@@ -96,11 +95,32 @@ class GiftInfo:
                 async with session.get(url, params=params) as resp:
                     all_info = await resp.json()
                     gifts_list = all_info["data"]["list"]
-                    all_gifts_list.extend(gifts_list)
+                    has_more = all_info["data"]["has_more"]
+                    if gifts_list:
+                        last_id = gifts_list[-1]["id"]
+                        all_gifts_list.extend(gifts_list)
+
+                while has_more:
+                    print("已触发“has_more”")
+                    params = {
+                        "last_id": last_id,
+                        "limit": sys.maxsize - 1,
+                        "coin_type": 0,
+                        "gift_id": "",
+                        "begin_time": date,
+                        "uname": ""
+                    }
+                    async with session.get(url, params=params) as resp:
+                        all_info = await resp.json()
+                        gifts_list = all_info["data"]["list"]
+                        has_more = all_info["data"]["has_more"]
+                        if gifts_list:
+                            last_id = gifts_list[-1]["id"]
+                            all_gifts_list.extend(gifts_list)
 
         return all_gifts_list
 
-    # 处理全部礼物数据生成dict
+    # 处理全部礼物数据生成字典以及{uid:name}字典
     async def all_info_handle(self):
         gifts_list = await self.getGiftInfoOneDay()
         id_index = {}
@@ -190,25 +210,6 @@ class GiftInfo:
         wb.save(self.name + ".xls")
         print("统计结果生成完成！请查看\"{}.xls\"".format(self.name))
 
-    # 根据大航海礼物信息生成txt统计结果
-    async def generateTxtFile(self):
-        gift_dict, id_index = await self.guard_info()
-        nowdir = os.getcwd()
-        result_file = os.path.join(nowdir, self.name + ".txt")
-        file = open(result_file, "w", encoding="utf-8")
-        for usr in gift_dict:
-            line = "========== " + id_index[usr] + "(" + usr + ") 的大航海 ==========\n"
-            for title in gift_dict[usr]:
-                all_dates = gift_dict[usr][title]
-                if len(all_dates) == 0:
-                    continue
-                line += (title + '：\n')
-                for date in all_dates:
-                    line += (date + '\n')
-            file.write(line + '\n')
-        file.close()
-        print("统计结果生成完成！请查看\"{}.txt\"".format(self.name))
-
     # 根据大航海礼物信息生成xls统计结果
     async def generateXlsFile(self):
         guard_dict, id_index = await self.guard_info()
@@ -272,3 +273,8 @@ class GiftInfo:
             writer = csv.writer(f)
             writer.writerows(csv_list)
         print("统计结果生成完成！请查看\"{}(大航海).csv\"".format(self.name))
+
+    async def run_all(self):
+        await self.generateCsvFile()
+        await self.generateXlsFile()
+        await self.xlsWrite()
