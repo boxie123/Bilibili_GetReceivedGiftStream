@@ -8,21 +8,69 @@ import xlwt
 import agent
 
 
+# 处理全部礼物数据生成字典以及{uid:name}字典
+def all_info_handle(gifts_list):
+    id_index = {}
+    gift_result = {}
+    for gift in gifts_list:
+        key = str(gift["uid"])
+        id_index[key] = gift["uname"]
+        gift_name = gift["gift_name"]
+        gift_id = gift["gift_id"]
+        gold = gift["normal_gold"] / 100
+        gift_num = gift["gift_num"]
+        time = gift["time"]
+
+        if key in gift_result:
+            if gift_id in gift_result[key]:
+                gift_result[key][gift_id]["gold"] += gold
+                gift_result[key][gift_id]["gift_num"] += gift_num
+                gift_result[key][gift_id]["time"].insert(0, gift["time"])
+            else:
+                gift_result[key][gift_id] = {
+                    "gift_name": gift_name,
+                    "gold": gold,
+                    "gift_num": gift_num,
+                    "time": [time]
+                }
+        else:
+            gift_result[key] = {
+                gift_id: {
+                    "gift_name": gift_name,
+                    "gold": gold,
+                    "gift_num": gift_num,
+                    "time": [time]
+                }
+            }
+    return gift_result, id_index
+
+
+# 处理礼物信息生成大航海字典以及{uid:name}字典
+def guard_info(gifts_list):
+    id_index = {}
+    gift_result = {}
+    for gift in gifts_list:
+        key = str(gift["uid"])
+        id_index[key] = gift["uname"]
+        if gift["gift_name"] in ("舰长", "提督", "总督"):
+            title = gift["gift_name"]
+        else:
+            continue
+
+        if key in gift_result:
+            gift_result[key][title].insert(0, gift["time"])
+        else:
+            val = {"总督": [], "提督": [], "舰长": [], title: [gift["time"]]}
+            gift_result[key] = val
+
+    return gift_result, id_index
+
+
 class GiftInfo:
-    # 构造函数
+    # 构造函数，生成特定格式的日期列表
     def __init__(self, cookies):
         self.cookies = cookies
-        self.year_begin = 0
-        self.month_begin = 0
-        self.day_list = []
-        self.day_begin = 0
-        self.day_end = 0
-        self.month_end = 0
-        self.year_end = 0
-        self.name = ""
 
-    # 生成特定格式的日期列表
-    def period_time(self):
         year_begin = input("请输入想查询的开始年份（直接回车默认今年）：")
         if year_begin == "":
             self.year_begin = datetime.datetime.today().year
@@ -120,67 +168,8 @@ class GiftInfo:
 
         return all_gifts_list
 
-    # 处理全部礼物数据生成字典以及{uid:name}字典
-    async def all_info_handle(self):
-        gifts_list = await self.getGiftInfoOneDay()
-        id_index = {}
-        gift_result = {}
-        for gift in gifts_list:
-            key = str(gift["uid"])
-            id_index[key] = gift["uname"]
-            gift_name = gift["gift_name"]
-            gift_id = gift["gift_id"]
-            gold = gift["normal_gold"] / 100
-            gift_num = gift["gift_num"]
-            time = gift["time"]
-
-            if key in gift_result:
-                if gift_id in gift_result[key]:
-                    gift_result[key][gift_id]["gold"] += gold
-                    gift_result[key][gift_id]["gift_num"] += gift_num
-                    gift_result[key][gift_id]["time"].insert(0, gift["time"])
-                else:
-                    gift_result[key][gift_id] = {
-                        "gift_name": gift_name,
-                        "gold": gold,
-                        "gift_num": gift_num,
-                        "time": [time]
-                    }
-            else:
-                gift_result[key] = {
-                    gift_id: {
-                        "gift_name": gift_name,
-                        "gold": gold,
-                        "gift_num": gift_num,
-                        "time": [time]
-                    }
-                }
-        return gift_result, id_index
-
-    # 处理礼物信息生成大航海字典以及{uid:name}字典
-    async def guard_info(self):
-        gifts_list = await self.getGiftInfoOneDay()
-        id_index = {}
-        gift_result = {}
-        for gift in gifts_list:
-            key = str(gift["uid"])
-            id_index[key] = gift["uname"]
-            if gift["gift_name"] in ("舰长", "提督", "总督"):
-                title = gift["gift_name"]
-            else:
-                continue
-
-            if key in gift_result:
-                gift_result[key][title].insert(0, gift["time"])
-            else:
-                val = {"总督": [], "提督": [], "舰长": [], title: [gift["time"]]}
-                gift_result[key] = val
-
-        return gift_result, id_index
-
     # 全部礼物信息写入xls文件
-    async def xlsWrite(self):
-        gift_result, id_index = await self.all_info_handle()
+    def xlsWrite(self, gift_result, id_index):
         wb = xlwt.Workbook(encoding="utf-8")
         sheet = wb.add_sheet("电池数量")
         sheet_num = wb.add_sheet("数目")
@@ -208,11 +197,10 @@ class GiftInfo:
             row += 1
 
         wb.save(self.name + ".xls")
-        print("统计结果生成完成！请查看\"{}.xls\"".format(self.name))
+        print("\"{}.xls\" 已生成！".format(self.name))
 
     # 根据大航海礼物信息生成xls统计结果
-    async def generateXlsFile(self):
-        guard_dict, id_index = await self.guard_info()
+    def generateXlsFile(self, guard_dict, id_index):
         wb = xlwt.Workbook(encoding="utf-8")
         style = xlwt.XFStyle()
         style.alignment.wrap = 1
@@ -252,13 +240,12 @@ class GiftInfo:
             row1 += 1
 
         wb.save(self.name + "(大航海).xls")
-        print("统计结果生成完成！请查看\"{}(大航海).xls\"".format(self.name))
+        print("\"{}(大航海).xls\" 已生成！".format(self.name))
 
     # 根据礼物信息生成csv统计结果，可直接导入BiliMessenger使用
-    async def generateCsvFile(self):
-        gift_dict, id_index = await self.guard_info()
+    def generateCsvFile(self, guard_dict, id_index):
         csv_list = []
-        for uid, gifts in gift_dict.items():
+        for uid, gifts in guard_dict.items():
             usr_name = id_index[uid]
             gifts_name = ""
             gifts_list = ["舰长", "提督", "总督"]
@@ -272,9 +259,23 @@ class GiftInfo:
         with open(self.name + "(大航海).csv", mode="w", encoding="utf-8-sig", newline="") as f:
             writer = csv.writer(f)
             writer.writerows(csv_list)
-        print("统计结果生成完成！请查看\"{}(大航海).csv\"".format(self.name))
+        print("\"{}(大航海).csv\" 已生成！".format(self.name))
 
-    async def run_all(self):
-        await self.generateCsvFile()
-        await self.generateXlsFile()
-        await self.xlsWrite()
+    async def main(self, choice):
+        gifts_list = await self.getGiftInfoOneDay()
+        if choice == 1:
+            guard_dict, id_index = guard_info(gifts_list)
+            self.generateXlsFile(guard_dict, id_index)
+        elif choice == 2:
+            guard_dict, id_index = guard_info(gifts_list)
+            self.generateCsvFile(guard_dict, id_index)
+        elif choice == 3:
+            gift_result, id_index = all_info_handle(gifts_list)
+            self.xlsWrite(gift_result, id_index)
+        elif choice == 4:
+            guard_dict, id_index = guard_info(gifts_list)
+            self.generateXlsFile(guard_dict, id_index)
+            self.generateCsvFile(guard_dict, id_index)
+            gift_result, id_index = all_info_handle(gifts_list)
+            self.xlsWrite(gift_result, id_index)
+            print("已全部生成完成！")

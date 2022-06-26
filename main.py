@@ -25,16 +25,8 @@ if __name__ == '__main__':
     print("==========================================")
 
     gift_info = getGift.GiftInfo(cookies)
-    gift_info.period_time()
     print("开始获取礼物信息...")
-    if choice == 1:
-        asyncio.run(gift_info.generateXlsFile())
-    elif choice == 2:
-        asyncio.run(gift_info.generateCsvFile())
-    elif choice == 3:
-        asyncio.run(gift_info.xlsWrite())
-    elif choice == 4:
-        asyncio.run(gift_info.run_all())
+    asyncio.run(gift_info.main(choice))
 
     # 检测更新
     up_to_date.main("v0.6.2")
