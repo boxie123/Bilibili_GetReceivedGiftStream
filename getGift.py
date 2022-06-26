@@ -66,49 +66,71 @@ def guard_info(gifts_list):
     return gift_result, id_index
 
 
+def try_int(num):
+    while True:
+        try:
+            int_num = int(num)
+            break
+        except ValueError:
+            print("输入错误，请输入纯数字")
+            num = input("请重新输入：")
+    return int_num
+
+
 class GiftInfo:
     # 构造函数，生成特定格式的日期列表
     def __init__(self, cookies):
         self.cookies = cookies
 
-        year_begin = input("请输入想查询的开始年份（直接回车默认今年）：")
-        if year_begin == "":
-            self.year_begin = datetime.datetime.today().year
-        else:
-            self.year_begin = int(year_begin)
+        while True:
+            print("==========================================")
+            year_begin = input("请输入想查询的开始年份（直接回车默认今年）：")
+            if year_begin == "":
+                self.year_begin = datetime.datetime.today().year
+            else:
+                self.year_begin = try_int(year_begin)
 
-        month_begin = input("请输入想查询的开始月份（直接回车默认本月）：")
-        if month_begin == "":
-            self.month_begin = datetime.datetime.today().month
-        else:
-            self.month_begin = int(month_begin)
+            month_begin = input("请输入想查询的开始月份（直接回车默认本月）：")
+            if month_begin == "":
+                self.month_begin = datetime.datetime.today().month
+            else:
+                self.month_begin = try_int(month_begin)
 
-        day_begin = input("请输入想查询的开始日期（直接回车默认今日）：")
-        if day_begin == "":
-            self.day_begin = datetime.datetime.today().day
-        else:
-            self.day_begin = int(day_begin)
+            day_begin = input("请输入想查询的开始日期（直接回车默认今日）：")
+            if day_begin == "":
+                self.day_begin = datetime.datetime.today().day
+            else:
+                self.day_begin = try_int(day_begin)
 
-        year_end = input("请输入想查询的结束年份（直接回车默认今年）：")
-        if year_end == "":
-            self.year_end = datetime.datetime.today().year
-        else:
-            self.year_end = int(year_end)
+            year_end = input("请输入想查询的结束年份（直接回车默认今年）：")
+            if year_end == "":
+                self.year_end = datetime.datetime.today().year
+            else:
+                self.year_end = try_int(year_end)
 
-        month_end = input("请输入想查询的结束月份（直接回车默认本月）：")
-        if month_end == "":
-            self.month_end = datetime.datetime.today().month
-        else:
-            self.month_end = int(month_end)
+            month_end = input("请输入想查询的结束月份（直接回车默认本月）：")
+            if month_end == "":
+                self.month_end = datetime.datetime.today().month
+            else:
+                self.month_end = try_int(month_end)
 
-        day_end = input("请输入想查询的结束日期（直接回车默认今日）：")
-        if day_end == "":
-            self.day_end = datetime.datetime.today().day
-        else:
-            self.day_end = int(day_end)
+            day_end = input("请输入想查询的结束日期（直接回车默认今日）：")
+            if day_end == "":
+                self.day_end = datetime.datetime.today().day
+            else:
+                self.day_end = try_int(day_end)
 
-        date_begin = datetime.date(self.year_begin, self.month_begin, self.day_begin)
-        date_end = datetime.date(self.year_end, self.month_end, self.day_end)
+            try:
+                date_begin = datetime.date(self.year_begin, self.month_begin, self.day_begin)
+                date_end = datetime.date(self.year_end, self.month_end, self.day_end)
+                if date_begin <= date_end:
+                    break
+                else:
+                    print("\nWarning:开始日期晚于结束日期，请重新输入\n")
+            except ValueError as e:
+                print(f"\n输入日期错误：{e}")
+                print("请重新输入\n")
+
         day_list_range = []
         delta = datetime.timedelta(days=1)
         while date_begin <= date_end:
@@ -263,16 +285,16 @@ class GiftInfo:
 
     async def main(self, choice):
         gifts_list = await self.getGiftInfoOneDay()
-        if choice == 1:
+        if choice == '1':
             guard_dict, id_index = guard_info(gifts_list)
             self.generateXlsFile(guard_dict, id_index)
-        elif choice == 2:
+        elif choice == '2':
             guard_dict, id_index = guard_info(gifts_list)
             self.generateCsvFile(guard_dict, id_index)
-        elif choice == 3:
+        elif choice == '3':
             gift_result, id_index = all_info_handle(gifts_list)
             self.xlsWrite(gift_result, id_index)
-        elif choice == 4:
+        elif choice == '4':
             guard_dict, id_index = guard_info(gifts_list)
             self.generateXlsFile(guard_dict, id_index)
             self.generateCsvFile(guard_dict, id_index)
