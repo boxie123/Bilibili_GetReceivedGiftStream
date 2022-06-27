@@ -81,10 +81,9 @@ class GiftInfo:
     # 构造函数，生成特定格式的日期列表
     def __init__(self, cookies):
         self.cookies = cookies
-
         while True:
             print("==========================================")
-            year_begin = input("请输入想查询的开始年份（直接回车默认今年）：")
+            year_begin = input("请输入想查询的开始年份（四位纯数字）（直接回车默认今年）：")
             if year_begin == "":
                 self.year_begin = datetime.datetime.today().year
             else:
@@ -102,7 +101,26 @@ class GiftInfo:
             else:
                 self.day_begin = try_int(day_begin)
 
-            year_end = input("请输入想查询的结束年份（直接回车默认今年）：")
+            try:
+                date_begin = datetime.date(self.year_begin, self.month_begin, self.day_begin)
+                break
+            except ValueError as e:
+                print(f"\n输入日期错误：{e}")
+                print("请重新输入\n")
+
+        most_early_date = datetime.date.today() - datetime.timedelta(179)
+        if date_begin < most_early_date:
+            print("\033[0;31m", "\nWarning:", "\033[0m", end="")
+            print("b站仅提供近180天数据，可查询最早日期为：{}".format(most_early_date.strftime('%Y-%m-%d')))
+            print("您查询的日期超出范围，更早数据将全部为0\n")
+            while True:
+                choice = input("输入0确认继续：")
+                if choice == "0":
+                    break
+
+        while True:
+            print("==========================================")
+            year_end = input("请输入想查询的结束年份（四位纯数字）（直接回车默认今年）：")
             if year_end == "":
                 self.year_end = datetime.datetime.today().year
             else:
@@ -121,15 +139,19 @@ class GiftInfo:
                 self.day_end = try_int(day_end)
 
             try:
-                date_begin = datetime.date(self.year_begin, self.month_begin, self.day_begin)
                 date_end = datetime.date(self.year_end, self.month_end, self.day_end)
-                if date_begin <= date_end:
-                    break
-                else:
-                    print("\nWarning:开始日期晚于结束日期，请重新输入\n")
+                break
             except ValueError as e:
                 print(f"\n输入日期错误：{e}")
                 print("请重新输入\n")
+
+        if date_begin > date_end:
+            print("\033[0;31m", "\nWarning:", "\033[0m", end="")
+            print("开始日期晚于结束日期，将生成空表格\n")
+            while True:
+                choice = input("输入0确认继续：")
+                if choice == "0":
+                    break
 
         day_list_range = []
         delta = datetime.timedelta(days=1)
