@@ -6,6 +6,9 @@ import aiohttp
 import xlwt
 
 import agent
+import colorama
+
+colorama.init(autoreset=True)
 
 
 # 处理全部礼物数据生成字典以及{uid:name}字典
@@ -72,6 +75,7 @@ def try_int(num):
             int_num = int(num)
             break
         except ValueError:
+            print(colorama.Fore.RED + "\nWarning:", end="")
             print("输入错误，请输入纯数字")
             num = input("请重新输入：")
     return int_num
@@ -105,14 +109,15 @@ class GiftInfo:
                 date_begin = datetime.date(self.year_begin, self.month_begin, self.day_begin)
                 break
             except ValueError as e:
-                print(f"\n输入日期错误：{e}")
+                print(colorama.Fore.RED + "\nWarning:", end="")
+                print(f"输入日期错误：{e}")
                 print("请重新输入\n")
 
         most_early_date = datetime.date.today() - datetime.timedelta(179)
         if date_begin < most_early_date:
-            print("\033[0;31m", "\nWarning:", "\033[0m", end="")
+            print(colorama.Fore.RED + "\nWarning:", end="")
             print("b站仅提供近180天数据，可查询最早日期为：{}".format(most_early_date.strftime('%Y-%m-%d')))
-            print("您查询的日期超出范围，更早数据将全部为0\n")
+            print("您查询的日期超出范围的部分数据将全部为0\n")
             while True:
                 choice = input("输入0确认继续：")
                 if choice == "0":
@@ -142,11 +147,12 @@ class GiftInfo:
                 date_end = datetime.date(self.year_end, self.month_end, self.day_end)
                 break
             except ValueError as e:
-                print(f"\n输入日期错误：{e}")
+                print(colorama.Fore.RED + "\nWarning:", end="")
+                print(f"输入日期错误：{e}")
                 print("请重新输入\n")
 
         if date_begin > date_end:
-            print("\033[0;31m", "\nWarning:", "\033[0m", end="")
+            print(colorama.Fore.RED + "\nWarning:", end="")
             print("开始日期晚于结束日期，将生成空表格\n")
             while True:
                 choice = input("输入0确认继续：")
