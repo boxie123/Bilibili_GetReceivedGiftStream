@@ -1,0 +1,43 @@
+name: 错误回报
+description: 在使用 Bilibili_GetReceivedGiftStream 的过程中遇到了错误
+title: '【错误回报】'
+labels: [ "bug?" ]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 请补全标题并认真填写下方内容
+
+        请清晰描述问题，不必严格套用模板。
+
+  - type: input
+    id: system_version
+    attributes:
+      label: 运行环境
+      description: 如 Windows Server 2012、CentOS 8.2 等
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Bilibili_GetReceivedGiftStream 版本
+      description: 可在文件名或 `main.py` 中查看
+    validations:
+      required: true
+
+  - type: textarea
+    id: bug_info
+    attributes:
+      label: 错误描述
+      description: 描述你遇到的问题，需要怎么复现？期望的结果是什么？
+    validations:
+      required: true
+
+  - type: textarea
+    id: log
+    attributes:
+      label: 报错日志（如果有）
+      description: 通过 CMD 打开程序而非双击
+      render: bash
