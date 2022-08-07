@@ -1,4 +1,4 @@
-![Bilibili_GetReceivedGiftStream](https://socialify.git.ci/boxie123/Bilibili_GetReceivedGiftStream/image?description=1&descriptionEditable=%E8%8E%B7%E5%8F%96bilibili%E7%A4%BC%E7%89%A9%E6%B5%81%E6%B0%B4%E7%BB%9F%E8%AE%A1%E8%A1%A8%E6%A0%BC&font=Source%20Code%20Pro&forks=1&language=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2Fboxie123%2FBilibili_GetReceivedGiftStream%2Fmain%2Fimages%2FBGRGS.png&name=1&pattern=Circuit%20Board&stargazers=1&theme=Dark)
+[![Bilibili_GetReceivedGiftStream](https://socialify.git.ci/boxie123/Bilibili_GetReceivedGiftStream/image?description=1&descriptionEditable=%E8%8E%B7%E5%8F%96bilibili%E7%A4%BC%E7%89%A9%E6%B5%81%E6%B0%B4%E7%BB%9F%E8%AE%A1%E8%A1%A8%E6%A0%BC&font=Source%20Code%20Pro&forks=1&language=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2Fboxie123%2FBilibili_GetReceivedGiftStream%2Fmain%2Fimages%2FBGRGS.png&name=1&pattern=Circuit%20Board&stargazers=1&theme=Dark)](https://boxie123.github.io/Bilibili-GetReceivedGiftStream/)
 
 # Bilibili_GetReceivedGiftStream
 
