@@ -1,7 +1,10 @@
+![Bilibili_GetReceivedGiftStream](https://socialify.git.ci/boxie123/Bilibili_GetReceivedGiftStream/image?description=1&descriptionEditable=%E8%8E%B7%E5%8F%96bilibili%E7%A4%BC%E7%89%A9%E6%B5%81%E6%B0%B4%E7%BB%9F%E8%AE%A1%E8%A1%A8%E6%A0%BC&font=Source%20Code%20Pro&forks=1&language=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2Fboxie123%20%2F%20Bilibili_GetReceivedGiftStream%2Fmain%2Fimages%2FBGRGS.png&name=1&pattern=Circuit%20Board&stargazers=1&theme=Dark)
+
 # Bilibili_GetReceivedGiftStream
 
  登录并获取bilibili账号某段时间礼物流水数据，生成表格。
 
+[![qq group](https://img.shields.io/badge/QQ%E7%BE%A4-1054608979-hotpink)](https://jq.qq.com/?_wv=1027&k=mEy0fIIq)
 
 ## 功能列表
 
@@ -34,5 +37,7 @@
 ****************************************
 
 开发者：[铂屑](https://github.com/boxie123)、[hyt658](https://github.com/hyt658)
+
+开发思路：详见[《Bilibili GetReceivedGiftStream》](https://boxie123.github.io/Bilibili-GetReceivedGiftStream/)
 
 ————致 [@艾鸽泰尔德](https://space.bilibili.com/1485569) ，希望可爱的鸽宝统计礼物不再辛苦。
