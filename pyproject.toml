@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bilibili_getreceivedgiftstream"
-version = "0.6.3"
+version = "0.7.0"
 description = "登录并获取bilibili账号某段时间礼物流水"
 authors = ["铂屑 <1824390830@qq.com>"]
 license = "MIT"
