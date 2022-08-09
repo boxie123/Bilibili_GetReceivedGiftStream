@@ -2,7 +2,7 @@ import csv
 import datetime
 import sys
 
-import aiohttp
+import httpx
 import xlwt
 
 import agent
@@ -83,8 +83,9 @@ def try_int(num):
 
 class GiftInfo:
     # 构造函数，生成特定格式的日期列表
-    def __init__(self, cookies):
-        self.cookies = cookies
+    def __init__(self, client):
+        self.cookies = client.cookies
+        client.close()
         while True:
             print("==========================================")
             year_begin = input("请输入想查询的开始年份（四位纯数字）（直接回车默认今年）：")
@@ -178,10 +179,10 @@ class GiftInfo:
             "Referer": "https://link.bilibili.com/p/center/index"
         }
         all_gifts_list = []
-        async with aiohttp.ClientSession(
+        async with httpx.AsyncClient(
                 cookies=self.cookies,
                 headers=headers
-        ) as session:
+        ) as async_client:
             for date in self.day_list:
                 params = {
                     "limit": sys.maxsize - 1,
@@ -190,13 +191,13 @@ class GiftInfo:
                     "begin_time": date,
                     "uname": ""
                 }
-                async with session.get(url, params=params) as resp:
-                    all_info = await resp.json()
-                    gifts_list = all_info["data"]["list"]
-                    has_more = all_info["data"]["has_more"]
-                    if gifts_list:
-                        last_id = gifts_list[-1]["id"]
-                        all_gifts_list.extend(gifts_list)
+                resp = await async_client.get(url, params=params)
+                all_info = resp.json()
+                gifts_list = all_info["data"]["list"]
+                has_more = all_info["data"]["has_more"]
+                if gifts_list:
+                    last_id = gifts_list[-1]["id"]
+                    all_gifts_list.extend(gifts_list)
 
                 while has_more:
                     print("已触发“has_more”")
@@ -208,13 +209,13 @@ class GiftInfo:
                         "begin_time": date,
                         "uname": ""
                     }
-                    async with session.get(url, params=params) as resp:
-                        all_info = await resp.json()
-                        gifts_list = all_info["data"]["list"]
-                        has_more = all_info["data"]["has_more"]
-                        if gifts_list:
-                            last_id = gifts_list[-1]["id"]
-                            all_gifts_list.extend(gifts_list)
+                    resp = await async_client.get(url, params=params)
+                    all_info = resp.json()
+                    gifts_list = all_info["data"]["list"]
+                    has_more = all_info["data"]["has_more"]
+                    if gifts_list:
+                        last_id = gifts_list[-1]["id"]
+                        all_gifts_list.extend(gifts_list)
 
         return all_gifts_list
 

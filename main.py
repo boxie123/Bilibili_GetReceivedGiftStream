@@ -7,7 +7,7 @@ import asyncio
 
 if __name__ == '__main__':
     # 获取用户登录状态
-    cookies = login.bzlogin()
+    client = login.bzlogin()
 
     # 询问用户使用什么功能
     print("\n本程序目前拥有的功能：")
@@ -27,7 +27,7 @@ if __name__ == '__main__':
             break
 
     # 使用功能
-    gift_info = getGift.GiftInfo(cookies)
+    gift_info = getGift.GiftInfo(client)
     print("开始获取礼物信息...")
     asyncio.run(gift_info.main(choice))
 

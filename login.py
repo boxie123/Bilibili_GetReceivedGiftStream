@@ -6,12 +6,11 @@ from io import BytesIO
 from threading import Thread
 
 import qrcode
-import requests
+import httpx
 from PIL import Image
 
 import agent
 
-requests.packages.urllib3.disable_warnings()
 
 headers = {'User-Agent': agent.get_user_agents(), 'Referer': "https://www.bilibili.com/"}
 headerss = {'User-Agent': agent.get_user_agents(), 'Host': 'passport.bilibili.com',
@@ -28,18 +27,18 @@ class showpng(Thread):
         img.show()
 
 
-def islogin(session):
+def islogin(client):
     try:
-        session.cookies.load(ignore_discard=True)
-    except Exception:
-        pass
-    loginurl = session.get("https://api.bilibili.com/x/web-interface/nav", verify=False, headers=headers).json()
+        client.cookies.jar.load(ignore_discard=True)
+    except Exception as e:
+        print(e)
+    loginurl = client.get("https://api.bilibili.com/x/web-interface/nav", headers=headers).json()
     if loginurl['code'] == 0:
         print('Cookies值有效，', loginurl['data']['uname'], '，已登录！')
-        return session, True
+        return client, True
     else:
         print('Cookies值已经失效，请重新扫码登录！')
-        return session, False
+        return client, False
 
 
 def bzlogin():
@@ -48,12 +47,12 @@ def bzlogin():
     if not os.path.exists(result_file):
         with open(result_file, 'w') as f:
             f.write("")
-    session = requests.session()
-    session.cookies = cookielib.LWPCookieJar(filename=result_file)
-    session, status = islogin(session)
+    client = httpx.Client(verify=False)
+    client.cookies = cookielib.LWPCookieJar(filename=result_file)
+    client, status = islogin(client)
     if not status:
-        getlogin = session.get('https://passport.bilibili.com/qrcode/getLoginUrl', headers=headers).json()
-        loginurl = requests.get(getlogin['data']['url'], headers=headers).url
+        getlogin = client.get('https://passport.bilibili.com/qrcode/getLoginUrl', headers=headers).json()
+        loginurl = httpx.get(getlogin['data']['url'], headers=headers).url
         oauthKey = getlogin['data']['oauthKey']
         qr = qrcode.QRCode()
         qr.add_data(loginurl)
@@ -66,7 +65,7 @@ def bzlogin():
         t.start()
         tokenurl = 'https://passport.bilibili.com/qrcode/getLoginInfo'
         while 1:
-            qrcodedata = session.post(tokenurl, data={'oauthKey': oauthKey, 'gourl': 'https://www.bilibili.com/'},
+            qrcodedata = client.post(tokenurl, data={'oauthKey': oauthKey, 'gourl': 'https://www.bilibili.com/'},
                                       headers=headerss).json()
             print(qrcodedata)
             if '-4' in str(qrcodedata['data']):
@@ -77,12 +76,11 @@ def bzlogin():
                 print('二维码已失效，请重新运行！')
             elif 'True' in str(qrcodedata['status']):
                 print('已确认，登入成功！')
-                session.get(qrcodedata['data']['url'], headers=headers)
+                client.get(qrcodedata['data']['url'], headers=headers)
                 break
             else:
                 print('其他：', qrcodedata)
             time.sleep(2)
-        session.cookies.save()
+        client.cookies.jar.save()
 
-    cookies_dict = requests.utils.dict_from_cookiejar(session.cookies)
-    return cookies_dict
+    return client

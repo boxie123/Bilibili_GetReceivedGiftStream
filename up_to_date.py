@@ -1,4 +1,4 @@
-import requests
+import httpx
 
 
 def main(now_tag):
@@ -6,7 +6,7 @@ def main(now_tag):
     header = {"accept": "application/vnd.github.v3+json"}
     url = "https://api.github.com/repos/boxie123/Bilibili_GetReceivedGiftStream/releases"
     param = {"per_page": 1, "page": 1}
-    releases_info = requests.get(url, headers=header, params=param).json()
+    releases_info = httpx.get(url, headers=header, params=param).json()
     tag_name = releases_info[0]["tag_name"]
     if tag_name == now_tag:
         print("提示：当前已是最新版本")
