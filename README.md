@@ -39,18 +39,6 @@
 开发者：[铂屑](https://github.com/boxie123)、[hyt658](https://github.com/hyt658)
 
 开发思路：详见[《Bilibili GetReceivedGiftStream》](https://boxie123.github.io/Bilibili-GetReceivedGiftStream/)。
-<span class="heimu" title="真的！">在写了再写了（目移）</span>
-<style>
-    .heimu {
-        background-color: #000;
-        color: #000;
-        text-shadow: none;
-        transition: background-color .4s;
-    }
-    .heimu:hover {
-        background-color: transparent;
-        color: white;
-    }
-</style>
+~~在写了再写了（目移）~~
 
 ————致 [@艾鸽泰尔德](https://space.bilibili.com/1485569) ，希望可爱的鸽宝统计礼物不再辛苦。
