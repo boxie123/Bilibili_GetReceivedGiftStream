@@ -32,7 +32,7 @@ if __name__ == '__main__':
     asyncio.run(gift_info.main(choice))
 
     # 检测更新
-    up_to_date.main("v0.6.4")
+    up_to_date.main("v0.7.0")
 
     # 防止快速退出
     input("\n\n按回车退出程序")
