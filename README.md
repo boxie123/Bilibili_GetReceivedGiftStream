@@ -1,20 +1,59 @@
 [![Bilibili_GetReceivedGiftStream](https://socialify.git.ci/boxie123/Bilibili_GetReceivedGiftStream/image?description=1&descriptionEditable=%E8%8E%B7%E5%8F%96bilibili%E7%A4%BC%E7%89%A9%E6%B5%81%E6%B0%B4%E7%BB%9F%E8%AE%A1%E8%A1%A8%E6%A0%BC&font=Source%20Code%20Pro&forks=1&language=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2Fboxie123%2FBilibili_GetReceivedGiftStream%2Fmain%2Fimages%2FBGRGS.png&name=1&pattern=Circuit%20Board&stargazers=1&theme=Dark)](https://boxie123.github.io/Bilibili-GetReceivedGiftStream/)
 
+<div align="center">
+
 # Bilibili_GetReceivedGiftStream
 
  登录并获取bilibili账号某段时间礼物流水数据，生成表格。
 
+![GitHub](https://img.shields.io/github/license/boxie123/Bilibili_GetReceivedGiftStream)
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/boxie123/Bilibili_GetReceivedGiftStream?include_prereleases)
+
 [![qq group](https://img.shields.io/badge/QQ%E7%BE%A4-1054608979-hotpink)](https://jq.qq.com/?_wv=1027&k=mEy0fIIq)
+
+</div>
 
 ## 功能列表
 
 1. 统计指定时间段的大航海记录（开通时间，用户名，uid），附表生成各大航海数量与总积分（xls格式）
 
-1. 统计指定时间段的大航海记录（用户，uid，大航海类型）。生成可直接导入BiliMessenger使用的数据列表（csv格式）
+    例表：
 
-1. 生成指定时间段收到所有礼物流水列表（用户，uid，礼物名，电池数），附表为（用户，uid，礼物名，数量）（xls格式）
+    表1：上舰时间
 
-1. 同时生成上述三个文件
+    | ID   | UID      | 舰长              | 提督 | 总督 |
+    | ---- | -------- | ------------------- | ---- | ---- |
+    | 铂屑 | 35192025 | 2022-04-29 09:24:39 |      |      |
+
+    表2：积分计算
+
+    | ID   | UID      | 总积分 | 舰长 | 提督 | 总督 |
+    | ---- | -------- | ------ | ---- | ---- | ---- |
+    | 铂屑 | 35192025 | 1      | 1    | 0    | 0    |
+
+2. 统计指定时间段的大航海记录（用户，uid，大航海类型）。生成可直接导入 [BiliMessenger](https://github.com/Xinrea/BiliMessengerElectron)（私信群发助手）使用的数据列表（csv格式）
+
+3. 生成指定时间段收到所有礼物流水列表（用户，uid，礼物名，电池数），附表为（用户，uid，礼物名，数量）（xls格式）
+   
+   例表：
+
+   表1：电池数量
+
+    | ID     | UID      | 小花花(id:31036) | 辣条(id:1) | 这个好诶(id:31213) | 舰长(id:10003) | SUM  |
+    | ------ | -------- | ---------------- | ---------- | ------------------ | -------------- | ---- |
+    | hyt658 | 23262005 | 5                | 0          | 10                 |                | 15   |
+    | 铂屑 | 35192025 |                  |            |                    | 1380           | 1380 |
+
+    表2：数目
+
+    | ID     | UID      | 小花花(id:31036) | 辣条(id:1) | 这个好诶(id:31213) | 舰长(id:10003) |
+    | ------ | -------- | ---------------- | ---------- | ------------------ | -------------- |
+    | hyt658 | 23262005 | 5                | 2          | 1                  |                |
+    | 铂屑 | 35192025 |                  |            |                    | 1              |
+
+
+4. 同时生成上述三个文件
 
 *********************************
 
@@ -35,6 +74,14 @@
 > **其中 `bzcookies.txt` 为重要账号登录信息，请谨慎保管、切勿泄漏，否则可能导致账号被盗用等后果。**
 
 ****************************************
+
+## 支持与贡献
+
+觉得好用可以给这个项目点个 Star 或者去关注非常可爱的 [艾鸽泰尔德](https://space.bilibili.com/1485569)。
+
+有意见或者建议也欢迎提交 [Issues](https://github.com/boxie123/Bilibili_GetReceivedGiftStream/issues) 和 [Pull requests](https://github.com/boxie123/Bilibili_GetReceivedGiftStream/pulls)。
+
+**************************************
 
 开发者：[铂屑](https://github.com/boxie123)、[hyt658](https://github.com/hyt658)
 
