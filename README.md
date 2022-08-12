@@ -75,6 +75,24 @@
 
 ****************************************
 
+## 使用方法
+
+下载最新的 [Release](https://github.com/boxie123/Bilibili_GetReceivedGiftStream/releases) 中的 `.exe` 文件，双击运行。
+
+Demo：
+
+![Demo](images/Demo.png)
+
+************************************
+
+## Q & A
+
+Q: 程序闪退？
+
+A: 大概率是网络问题导致爬取过程中链接超时。
+
+若排除此原因后仍然闪退，请打开 CMD 窗口手动运行程序，带着**报错信息**来提 Issues 吧！
+
 ## 支持与贡献
 
 觉得好用可以给这个项目点个 Star 或者去关注非常可爱的 [艾鸽泰尔德](https://space.bilibili.com/1485569)。
