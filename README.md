@@ -77,11 +77,32 @@
 
 ## 使用方法
 
+### 方法一：下载打包好的程序（推荐）
+
 下载最新的 [Release](https://github.com/boxie123/Bilibili_GetReceivedGiftStream/releases) 中的 `.exe` 文件，双击运行。
 
 Demo：
 
 ![Demo](images/Demo.png)
+
+### 方法二：手动构建
+
+克隆Git仓库：
+
+```sh
+git clone https://github.com/boxie123/Bilibili_GetReceivedGiftStream.git
+```
+
+构建虚拟环境：
+
+```sh
+poetry install
+```
+
+运行：
+```sh
+poetry run python main.py
+```
 
 ************************************
 
