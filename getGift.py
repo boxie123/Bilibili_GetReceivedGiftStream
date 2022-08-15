@@ -34,7 +34,7 @@ def all_info_handle(gifts_list):
                     "gift_name": gift_name,
                     "gold": gold,
                     "gift_num": gift_num,
-                    "time": [time]
+                    "time": [time],
                 }
         else:
             gift_result[key] = {
@@ -42,7 +42,7 @@ def all_info_handle(gifts_list):
                     "gift_name": gift_name,
                     "gold": gold,
                     "gift_num": gift_num,
-                    "time": [time]
+                    "time": [time],
                 }
             }
     return gift_result, id_index
@@ -107,7 +107,9 @@ class GiftInfo:
                 self.day_begin = try_int(day_begin)
 
             try:
-                date_begin = datetime.date(self.year_begin, self.month_begin, self.day_begin)
+                date_begin = datetime.date(
+                    self.year_begin, self.month_begin, self.day_begin
+                )
                 break
             except ValueError as e:
                 print(colorama.Fore.RED + "\nWarning:", end="")
@@ -117,7 +119,9 @@ class GiftInfo:
         most_early_date = datetime.date.today() - datetime.timedelta(179)
         if date_begin < most_early_date:
             print(colorama.Fore.RED + "\nWarning:", end="")
-            print("b站仅提供近180天数据，可查询最早日期为：{}".format(most_early_date.strftime('%Y-%m-%d')))
+            print(
+                "b站仅提供近180天数据，可查询最早日期为：{}".format(most_early_date.strftime("%Y-%m-%d"))
+            )
             print("您查询的日期超出范围的部分数据将全部为0\n")
             while True:
                 choice = input("输入0确认继续：")
@@ -163,25 +167,30 @@ class GiftInfo:
         day_list_range = []
         delta = datetime.timedelta(days=1)
         while date_begin <= date_end:
-            day_str = date_begin.strftime('%Y-%m-%d')
+            day_str = date_begin.strftime("%Y-%m-%d")
             day_list_range.append(day_str)
             date_begin += delta
 
         self.day_list = day_list_range
-        self.name = "{}年{}月{}日至{}年{}月{}日礼物统计".format(self.year_begin, self.month_begin, self.day_begin,
-                                                     self.year_end, self.month_end, self.day_end)
+        self.name = "{}年{}月{}日至{}年{}月{}日礼物统计".format(
+            self.year_begin,
+            self.month_begin,
+            self.day_begin,
+            self.year_end,
+            self.month_end,
+            self.day_end,
+        )
 
     # 获取某一段时间礼物信息
     async def getGiftInfoOneDay(self):
         url = "https://api.live.bilibili.com/xlive/revenue/v1/giftStream/getReceivedGiftStreamNextList"
         headers = {
             "User-Agent": agent.get_user_agents(),
-            "Referer": "https://link.bilibili.com/p/center/index"
+            "Referer": "https://link.bilibili.com/p/center/index",
         }
         all_gifts_list = []
         async with httpx.AsyncClient(
-                cookies=self.cookies,
-                headers=headers
+            cookies=self.cookies, headers=headers
         ) as async_client:
             for date in self.day_list:
                 params = {
@@ -189,7 +198,7 @@ class GiftInfo:
                     "coin_type": 0,
                     "gift_id": "",
                     "begin_time": date,
-                    "uname": ""
+                    "uname": "",
                 }
                 resp = await async_client.get(url, params=params)
                 all_info = resp.json()
@@ -207,7 +216,7 @@ class GiftInfo:
                         "coin_type": 0,
                         "gift_id": "",
                         "begin_time": date,
-                        "uname": ""
+                        "uname": "",
                     }
                     resp = await async_client.get(url, params=params)
                     all_info = resp.json()
@@ -224,7 +233,7 @@ class GiftInfo:
         wb = xlwt.Workbook(encoding="utf-8")
         sheet = wb.add_sheet("电池数量")
         sheet_num = wb.add_sheet("数目")
-        sheet_header_list = ['ID', 'UID']
+        sheet_header_list = ["ID", "UID"]
         for i in range(len(sheet_header_list)):
             sheet.write(0, i, sheet_header_list[i])
             sheet_num.write(0, i, sheet_header_list[i])
@@ -255,15 +264,15 @@ class GiftInfo:
             sheet.write(i, column, xlwt.Formula(formula))
 
         wb.save(self.name + ".xls")
-        print("\"{}.xls\" 已生成！".format(self.name))
+        print('"{}.xls" 已生成！'.format(self.name))
 
     # 根据大航海礼物信息生成xls统计结果
     def generateXlsFile(self, guard_dict, id_index):
         wb = xlwt.Workbook(encoding="utf-8")
         style = xlwt.XFStyle()
         style.alignment.wrap = 1
-        sheet = wb.add_sheet('上舰时间')
-        sheet_header_list = ['ID', 'UID', '舰长', '提督', '总督']
+        sheet = wb.add_sheet("上舰时间")
+        sheet_header_list = ["ID", "UID", "舰长", "提督", "总督"]
 
         for i in range(len(sheet_header_list)):
             sheet.write(0, i, sheet_header_list[i])
@@ -271,15 +280,18 @@ class GiftInfo:
                 sheet.col(i).width = 256 * 25
         row = 1
 
-        sheet1 = wb.add_sheet('积分计算')
-        sheet1_head = ['ID', 'UID', '总积分', '舰长', '提督', '总督']
+        sheet1 = wb.add_sheet("积分计算")
+        sheet1_head = ["ID", "UID", "总积分", "舰长", "提督", "总督"]
         for i in range(len(sheet1_head)):
             sheet1.write(0, i, sheet1_head[i])
         row1 = 1
 
         for uid in guard_dict:
-            scores = len(guard_dict[uid]['舰长']) + 15 * len(guard_dict[uid]['提督']) \
-                     + 200 * len(guard_dict[uid]['总督'])
+            scores = (
+                len(guard_dict[uid]["舰长"])
+                + 15 * len(guard_dict[uid]["提督"])
+                + 200 * len(guard_dict[uid]["总督"])
+            )
             sheet.write(row, 1, uid)
             sheet.write(row, 0, id_index[uid])
             sheet1.write(row1, 1, uid)
@@ -298,7 +310,7 @@ class GiftInfo:
             row1 += 1
 
         wb.save(self.name + "(大航海).xls")
-        print("\"{}(大航海).xls\" 已生成！".format(self.name))
+        print('"{}(大航海).xls" 已生成！'.format(self.name))
 
     # 根据礼物信息生成csv统计结果，可直接导入BiliMessenger使用
     def generateCsvFile(self, guard_dict, id_index):
@@ -314,23 +326,25 @@ class GiftInfo:
             row_list = [gifts_name, uid, usr_name]
             csv_list.append(row_list)
 
-        with open(self.name + "(大航海).csv", mode="w", encoding="utf-8-sig", newline="") as f:
+        with open(
+            self.name + "(大航海).csv", mode="w", encoding="utf-8-sig", newline=""
+        ) as f:
             writer = csv.writer(f)
             writer.writerows(csv_list)
-        print("\"{}(大航海).csv\" 已生成！".format(self.name))
+        print('"{}(大航海).csv" 已生成！'.format(self.name))
 
     async def main(self, choice):
         gifts_list = await self.getGiftInfoOneDay()
-        if choice == '1':
+        if choice == "1":
             guard_dict, id_index = guard_info(gifts_list)
             self.generateXlsFile(guard_dict, id_index)
-        elif choice == '2':
+        elif choice == "2":
             guard_dict, id_index = guard_info(gifts_list)
             self.generateCsvFile(guard_dict, id_index)
-        elif choice == '3':
+        elif choice == "3":
             gift_result, id_index = all_info_handle(gifts_list)
             self.xlsWrite(gift_result, id_index)
-        elif choice == '4':
+        elif choice == "4":
             guard_dict, id_index = guard_info(gifts_list)
             self.generateXlsFile(guard_dict, id_index)
             self.generateCsvFile(guard_dict, id_index)
