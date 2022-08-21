@@ -40,4 +40,10 @@ body:
     attributes:
       label: 报错日志（如果有）
       description: 通过 CMD 打开程序而非双击
-      render: bash
+      value: |
+        <details>
+          <summary>123</summary>
+          ```bash
+          # 在这里填写你的报错日志
+          ```
+        </details>
