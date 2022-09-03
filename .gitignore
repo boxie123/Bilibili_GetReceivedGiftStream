@@ -152,7 +152,7 @@ cython_debug/
 .idea/
 
 # My
-*.txt
+bzcookies.txt
 *.xls
 *.csv
 *.ico

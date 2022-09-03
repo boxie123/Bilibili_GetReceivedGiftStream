@@ -87,21 +87,34 @@ Demo：
 
 ### 方法二：手动构建
 
-克隆Git仓库：
+#### 克隆Git仓库：
 
 ```sh
 git clone https://github.com/boxie123/Bilibili_GetReceivedGiftStream.git
+cd Bilibili_GetReceivedGiftStream
 ```
 
-构建虚拟环境：
+#### 构建虚拟环境：
+
+使用 poetry：
 
 ```sh
-poetry install
+poetry install --no-dev
+poetry shell
 ```
 
-运行：
+**或**使用 venv：
+
 ```sh
-poetry run python main.py
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+#### 运行：
+
+```sh
+python main.py
 ```
 
 ************************************
