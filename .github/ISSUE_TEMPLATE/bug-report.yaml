@@ -38,6 +38,22 @@ body:
   - type: textarea
     id: log
     attributes:
-      label: 报错日志（如果有）
+      label: 报错日志以及其他描述（如果有）
       description: 通过 CMD 打开程序而非双击
-      render: bash
+      value: |
+        ### 日志
+        
+        <details>
+        <summary>
+        <!--此处填写报错标题-->
+        </summary>
+        
+        ```bash
+        # 在这里填写你的报错日志
+        ```
+          
+        </details>
+        
+        ### 其他补充描述
+        
+        <!--此处填写补充描述-->
