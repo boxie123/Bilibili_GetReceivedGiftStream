@@ -15,7 +15,7 @@ httpx = "^0.23.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^5.0.4"
-black = {version = "^22.6.0", allow-prereleases = true}
+black = {version = "^22.10.0", allow-prereleases = true}
 pyinstaller = "^5.3"
 
 [build-system]
