@@ -3,7 +3,7 @@ import datetime
 import sys
 
 import httpx
-import xlwt
+import xlsxwriter
 
 import agent
 import colorama
@@ -230,20 +230,21 @@ class GiftInfo:
 
     # 全部礼物信息写入xls文件
     def xlsWrite(self, gift_result, id_index):
-        wb = xlwt.Workbook(encoding="utf-8")
-        sheet = wb.add_sheet("电池数量")
-        sheet_num = wb.add_sheet("数目")
+        wb = xlsxwriter.Workbook(self.name + ".xlsx")
+        sheet = wb.add_worksheet("电池数量")
+        sheet_num = wb.add_worksheet("礼物数目")
         sheet_header_list = ["ID", "UID"]
-        for i in range(len(sheet_header_list)):
-            sheet.write(0, i, sheet_header_list[i])
-            sheet_num.write(0, i, sheet_header_list[i])
+        sheet.write_row(0, 0, sheet_header_list)
+        sheet_num.write_row(0, 0, sheet_header_list)
 
         row = 1
+        gold_sum_list = ["SUM", ]
         for uid in gift_result:
             sheet.write(row, 1, uid)
             sheet.write(row, 0, id_index[uid])
             sheet_num.write(row, 1, uid)
             sheet_num.write(row, 0, id_index[uid])
+            gold_sum = 0
             for gift_id in gift_result[uid]:
                 if gift_id not in sheet_header_list:
                     sheet_header_list.append(gift_id)
@@ -252,39 +253,35 @@ class GiftInfo:
                     sheet.write(0, column, f"{gift_name}(id:{gift_id})")
                     sheet_num.write(0, column, f"{gift_name}(id:{gift_id})")
                 column = sheet_header_list.index(gift_id)
-                sheet.write(row, column, gift_result[uid][gift_id]["gold"])
+                gold_temp = gift_result[uid][gift_id]["gold"]
+                sheet.write(row, column, gold_temp)
+                gold_sum += gold_temp
                 sheet_num.write(row, column, gift_result[uid][gift_id]["gift_num"])
             row += 1
+            gold_sum_list.append(gold_sum)
 
-        # 删除求和公式
-        # column = len(sheet_header_list)
-        # column_char = chr(column + 64)
-        # sheet.write(0, column, "SUM")
-        # for i in range(1, row):
-        #     formula = "SUM(C{row}:{char}{row})".format(row=i + 1, char=column_char)
-        #     sheet.write(i, column, xlwt.Formula(formula))
+        # 求和
+        column = len(sheet_header_list)
+        sheet.write_column(0, column, gold_sum_list)
 
-        wb.save(self.name + ".xls")
-        print('"{}.xls" 已生成！'.format(self.name))
+        wb.close()
+        print('"{}.xlsx" 已生成！'.format(self.name))
 
     # 根据大航海礼物信息生成xls统计结果
     def generateXlsFile(self, guard_dict, id_index):
-        wb = xlwt.Workbook(encoding="utf-8")
-        style = xlwt.XFStyle()
-        style.alignment.wrap = 1
-        sheet = wb.add_sheet("上舰时间")
+        wb = xlsxwriter.Workbook(filename=self.name + "(大航海).xlsx")
+
+        text_wrap = wb.add_format({'text_wrap': True})
+        sheet = wb.add_worksheet("上舰时间")
         sheet_header_list = ["ID", "UID", "舰长", "提督", "总督"]
 
-        for i in range(len(sheet_header_list)):
-            sheet.write(0, i, sheet_header_list[i])
-            if i > 1:
-                sheet.col(i).width = 256 * 25
-        row = 1
+        sheet.write_row(0, 0, sheet_header_list)
+        sheet.set_column(1, len(sheet_header_list), 25)
 
-        sheet1 = wb.add_sheet("积分计算")
+        row = 1
+        sheet1 = wb.add_worksheet("上舰具体数量")
         sheet1_head = ["ID", "UID", "总积分", "舰长", "提督", "总督"]
-        for i in range(len(sheet1_head)):
-            sheet1.write(0, i, sheet1_head[i])
+        sheet1.write_row(0, 0, sheet1_head)
         row1 = 1
 
         for uid in guard_dict:
@@ -306,12 +303,12 @@ class GiftInfo:
                     continue
                 column = sheet_header_list.index(title)
                 time_str = "\n".join(all_dates)
-                sheet.write(row, column, time_str, style)
+                sheet.write(row, column, time_str, text_wrap)
             row += 1
             row1 += 1
 
-        wb.save(self.name + "(大航海).xls")
-        print('"{}(大航海).xls" 已生成！'.format(self.name))
+        wb.close()
+        print('"{}(大航海).xlsx" 已生成！'.format(self.name))
 
     # 根据礼物信息生成csv统计结果，可直接导入BiliMessenger使用
     def generateCsvFile(self, guard_dict, id_index):

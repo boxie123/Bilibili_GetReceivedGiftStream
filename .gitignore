@@ -157,3 +157,5 @@ bzcookies.txt
 *.csv
 *.ico
 *.json
+*.xlsx
+test/
