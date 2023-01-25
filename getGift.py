@@ -256,12 +256,13 @@ class GiftInfo:
                 sheet_num.write(row, column, gift_result[uid][gift_id]["gift_num"])
             row += 1
 
-        column = len(sheet_header_list)
-        column_char = chr(column + 64)
-        sheet.write(0, column, "SUM")
-        for i in range(1, row):
-            formula = "SUM(C{row}:{char}{row})".format(row=i + 1, char=column_char)
-            sheet.write(i, column, xlwt.Formula(formula))
+        # 删除求和公式
+        # column = len(sheet_header_list)
+        # column_char = chr(column + 64)
+        # sheet.write(0, column, "SUM")
+        # for i in range(1, row):
+        #     formula = "SUM(C{row}:{char}{row})".format(row=i + 1, char=column_char)
+        #     sheet.write(i, column, xlwt.Formula(formula))
 
         wb.save(self.name + ".xls")
         print('"{}.xls" 已生成！'.format(self.name))
