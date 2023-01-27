@@ -65,9 +65,9 @@
 
     - `bzcookies.txt`
 
-    - `yyyy年mm月nn日至yyyy年mm月nn日礼物统计(大航海).xls/csv` 
+    - `yyyy年mm月nn日至yyyy年mm月nn日礼物统计(大航海).xlsx/csv` 
 
-    - `yyyy年mm月nn日至yyyy年mm月nn日礼物统计.xls`
+    - `yyyy年mm月nn日至yyyy年mm月nn日礼物统计.xlsx`
 
     请确保运行本程序前，当前文件夹中**无同名文件**，否则会直接覆盖造成数据损失。
 
@@ -87,6 +87,8 @@ Demo：
 
 ### 方法二：手动构建
 
+> 需使用 [git](https://git-scm.com/)、[pdm](https://github.com/pdm-project/pdm)、[python](https://www.python.org/) 等，不建议小白手动构建。
+
 #### 克隆Git仓库：
 
 ```sh
@@ -96,25 +98,16 @@ cd Bilibili_GetReceivedGiftStream
 
 #### 构建虚拟环境：
 
-使用 poetry：
+使用 [pdm](https://github.com/pdm-project/pdm)：
 
 ```sh
-poetry install --no-dev
-poetry shell
-```
-
-**或**使用 venv：
-
-```sh
-python -m venv venv
-.\venv\Scripts\activate
-pip install -r requirements.txt
+pdm install --prod
 ```
 
 #### 运行：
 
 ```sh
-python main.py
+pdm run python main.py
 ```
 
 ************************************
