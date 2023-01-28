@@ -86,19 +86,19 @@ class GiftInfo:
         client.close()
         while True:
             console.rule("输入查询开始日期")
-            year_begin = console.input("请输入想查询的开始[blue]年份[/blue]（四位纯数字）（直接回车默认今年）：")
+            year_begin = console.input("请输入想查询的开始[b blue]年份[/b blue]（四位纯数字）（直接回车默认今年）：")
             if year_begin == "":
                 self.year_begin = datetime.datetime.today().year
             else:
                 self.year_begin = try_int(year_begin)
 
-            month_begin = console.input("请输入想查询的开始[blue]月份[/blue]（直接回车默认本月）：")
+            month_begin = console.input("请输入想查询的开始[b blue]月份[/b blue]（直接回车默认本月）：")
             if month_begin == "":
                 self.month_begin = datetime.datetime.today().month
             else:
                 self.month_begin = try_int(month_begin)
 
-            day_begin = console.input("请输入想查询的开始[blue]日期[/blue]（直接回车默认今日）：")
+            day_begin = console.input("请输入想查询的开始[b blue]日期[/b blue]（直接回车默认今日）：")
             if day_begin == "":
                 self.day_begin = datetime.datetime.today().day
             else:
@@ -128,19 +128,19 @@ class GiftInfo:
 
         while True:
             console.rule("输入查询末尾日期")
-            year_end = console.input("请输入想查询的结束[blue]年份[/blue]（四位纯数字）（直接回车默认今年）：")
+            year_end = console.input("请输入想查询的结束[b blue]年份[/b blue]（四位纯数字）（直接回车默认今年）：")
             if year_end == "":
                 self.year_end = datetime.datetime.today().year
             else:
                 self.year_end = try_int(year_end)
 
-            month_end = console.input("请输入想查询的结束[blue]月份[/blue]（直接回车默认本月）：")
+            month_end = console.input("请输入想查询的结束[b blue]月份[/b blue]（直接回车默认本月）：")
             if month_end == "":
                 self.month_end = datetime.datetime.today().month
             else:
                 self.month_end = try_int(month_end)
 
-            day_end = console.input("请输入想查询的结束[blue]日期[/blue]（直接回车默认今日）：")
+            day_end = console.input("请输入想查询的结束[b blue]日期[/b blue]（直接回车默认今日）：")
             if day_end == "":
                 self.day_end = datetime.datetime.today().day
             else:
