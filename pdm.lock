@@ -267,7 +267,7 @@ summary = "A Python module for creating Excel XLSX files."
 
 [metadata]
 lock_version = "4.1"
-content_hash = "sha256:651fd15b5b8504083f23375c0ce4e83cac6b1e8f607477794941899398323801"
+content_hash = "sha256:66c3d1a0a41628e4e83035daeed082587ab242670834fc7f783b8973e4f5eb4c"
 
 [metadata.files]
 "altgraph 0.17.3" = [

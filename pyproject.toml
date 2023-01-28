@@ -25,12 +25,10 @@ requires-python = ">=3.10.9,<3.11"
 dependencies = [
     "qrcode>=7.3.1",
     "Pillow>=9.4.0",
-    "colorama>=0.4.6",
     "httpx>=0.23.3",
     "xlsxwriter>=3.0.7",
     "qrcode<8.0.0,>=7.3.1",
     "Pillow<10.0.0,>=9.2.0",
-    "colorama<1.0.0,>=0.4.5",
     "httpx<1.0.0,>=0.23.0",
     "xlsxwriter<4.0.0,>=3.0.7",
     "rich>=13.3.1",

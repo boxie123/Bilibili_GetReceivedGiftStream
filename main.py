@@ -1,8 +1,9 @@
 import asyncio
 import sys
 
-from rich.tree import Tree
+from rich.panel import Panel
 from rich.prompt import Prompt
+from rich.tree import Tree
 
 import getGift
 import login
@@ -11,6 +12,27 @@ from console import console
 
 if __name__ == "__main__":
     # 获取用户登录状态
+    console.print(
+        Panel.fit(
+            r"""
+   ,---,           ,---,   ,----..        ,---,. 
+  '  .' \       ,`--.' |  /   /   \     ,'  .' | 
+ /  ;    '.     |   :  : |   :     :  ,---.'   | 
+:  :       \    :   |  ' .   |  ;. /  |   |   .' 
+:  |   /\   \   |   :  | .   ; /--`   :   :  |-, 
+|  :  ' ;.   :  '   '  ; ;   | ;  __  :   |  ;/| 
+|  |  ;/  \   \ |   |  | |   : |.' .' |   :   .' 
+'  :  | \  \ ,' '   :  ; .   | '_.' : |   |  |-, 
+|  |  '  '--'   |   |  ' '   ; : \  | '   :  ;/| 
+|  :  :         '   :  | '   | '/  .' |   |    \ 
+|  | ,'         ;   |.'  |   :    /   |   :   .' 
+`--''           '---'     \   \ .'    |   | ,'   
+                           `---`      `----'     
+    """,
+            title="本程序图标由 [b bright_magenta]艾鸽泰尔德[/b bright_magenta] 友情赞助",
+            subtitle="UID 1485569",
+        )
+    )
     client = login.bzlogin()
 
     # 询问用户使用什么功能
@@ -50,4 +72,4 @@ if __name__ == "__main__":
         console.print("检测失败")
 
     # 防止快速退出
-    console.input("\n\n按回车[blue]退出[/blue]程序")
+    console.input("\n\n感谢使用，按回车[blue]退出[/blue]程序")

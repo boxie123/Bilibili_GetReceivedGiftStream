@@ -5,14 +5,13 @@ import time
 from io import BytesIO
 from threading import Thread
 
-import qrcode
 import httpx
+import qrcode
 from PIL import Image
 from rich.live import Live
 
 import agent
 from console import console
-
 
 headers = {
     "User-Agent": agent.get_user_agents(),
