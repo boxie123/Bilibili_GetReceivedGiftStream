@@ -33,6 +33,7 @@ dependencies = [
     "colorama<1.0.0,>=0.4.5",
     "httpx<1.0.0,>=0.23.0",
     "xlsxwriter<4.0.0,>=3.0.7",
+    "rich>=13.3.1",
 ]
 name = "bilibili_getreceivedgiftstream"
 version = "0.8.0"
