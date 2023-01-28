@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
     # 检测更新
     try:
-        up_to_date.main("v0.8.0")
+        up_to_date.main("v0.8.1")
     except Exception:
         console.print("检测失败")
 
