@@ -5,12 +5,13 @@ import time
 from io import BytesIO
 from threading import Thread
 
-import qrcode
 import httpx
+import qrcode
 from PIL import Image
+from rich.live import Live
 
 import agent
-
+from console import console
 
 headers = {
     "User-Agent": agent.get_user_agents(),
@@ -37,15 +38,17 @@ def islogin(client):
     try:
         client.cookies.jar.load(ignore_discard=True)
     except Exception as e:
-        print(e)
+        console.print(e)
     loginurl = client.get(
         "https://api.bilibili.com/x/web-interface/nav", headers=headers
     ).json()
     if loginurl["code"] == 0:
-        print("Cookies值有效，", loginurl["data"]["uname"], "，已登录！")
+        console.print(
+            "Cookies值有效，[b blue]{}[/b blue]，已登录！".format(loginurl["data"]["uname"])
+        )
         return client, True
     else:
-        print("Cookies值已经失效，请重新扫码登录！")
+        console.print("Cookies值已经失效，[blue]已使用默认图片打开方式弹出二维码[/blue]，请重新扫码登录！")
         return client, False
 
 
@@ -74,26 +77,35 @@ def bzlogin():
         t = showpng(png)
         t.start()
         tokenurl = "https://passport.bilibili.com/qrcode/getLoginInfo"
-        while 1:
-            qrcodedata = client.post(
-                tokenurl,
-                data={"oauthKey": oauthKey, "gourl": "https://www.bilibili.com/"},
-                headers=headerss,
-            ).json()
-            print(qrcodedata)
-            if "-4" in str(qrcodedata["data"]):
-                print("二维码未失效，请扫码！")
-            elif "-5" in str(qrcodedata["data"]):
-                print("已扫码，请确认！")
-            elif "-2" in str(qrcodedata["data"]):
-                print("二维码已失效，请重新运行！")
-            elif "True" in str(qrcodedata["status"]):
-                print("已确认，登入成功！")
-                client.get(qrcodedata["data"]["url"], headers=headers)
-                break
-            else:
-                print("其他：", qrcodedata)
-            time.sleep(2)
+        status_qrcode = ""
+        with Live(
+            f"二维码状态为：[b green]{status_qrcode}[/b green]",
+            console=console,
+            refresh_per_second=2,
+        ) as live:
+            while 1:
+                qrcodedata = client.post(
+                    tokenurl,
+                    data={"oauthKey": oauthKey, "gourl": "https://www.bilibili.com/"},
+                    headers=headerss,
+                ).json()
+                # console.print(qrcodedata)
+                if "-4" in str(qrcodedata["data"]):
+                    status_qrcode = "二维码未失效，请扫码！"
+                elif "-5" in str(qrcodedata["data"]):
+                    status_qrcode = "已扫码，请确认！"
+                elif "-2" in str(qrcodedata["data"]):
+                    status_qrcode = "二维码已失效，请重新运行！"
+                elif "True" in str(qrcodedata["status"]):
+                    status_qrcode = "已确认，登入成功！"
+                    client.get(qrcodedata["data"]["url"], headers=headers)
+                    break
+                else:
+                    console.print("其他：", qrcodedata)
+
+                live.update(f"二维码状态为：[b green]{status_qrcode}[/b green]")
+                time.sleep(2)
+
         client.cookies.jar.save()
 
     return client
