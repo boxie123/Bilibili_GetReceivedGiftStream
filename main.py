@@ -5,10 +5,12 @@ from rich.panel import Panel
 from rich.prompt import Prompt
 from rich.tree import Tree
 
-import getGift
-import login
-import up_to_date
-from console import console
+from src import (
+    getGift,
+    login,
+    up_to_date,
+)
+from src.console import console
 
 if __name__ == "__main__":
     # 获取用户登录状态
@@ -33,7 +35,7 @@ if __name__ == "__main__":
             subtitle="UID 1485569",
         )
     )
-    client = login.bzlogin()
+    client = login.main()
 
     # 询问用户使用什么功能
     console.print("\n本程序目前拥有的功能：\n")
@@ -67,7 +69,7 @@ if __name__ == "__main__":
 
     # 检测更新
     try:
-        up_to_date.main("v0.8.1")
+        up_to_date.main("v0.8.2")
     except Exception:
         console.print("检测失败")
 
