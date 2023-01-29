@@ -25,7 +25,7 @@ def main(now_tag):
                     now_tag, tag_name
                 )
             )
-            console.print("\n可点击下面的链接到浏览器下载最新版本：")
+            console.print("\n可按住 [b]Ctrl[/b] 并单击下面的链接到浏览器下载最新版本：")
             console.print(new_html_url, style=f"link {new_html_url}")
 
 

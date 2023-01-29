@@ -1,5 +1,4 @@
 import asyncio
-import sys
 
 from rich.panel import Panel
 from rich.prompt import Prompt
@@ -7,6 +6,7 @@ from rich.tree import Tree
 
 from src import getGift, login, up_to_date
 from src.console import console
+from src.live_exit import live_exit
 
 if __name__ == "__main__":
     # 获取用户登录状态
@@ -58,7 +58,7 @@ if __name__ == "__main__":
         default="4",
     )
     if choice == "0":
-        sys.exit(0)
+        live_exit()
 
     # 使用功能
     gift_info = getGift.GiftInfo(client)
@@ -67,9 +67,10 @@ if __name__ == "__main__":
 
     # 检测更新
     try:
-        up_to_date.main("v0.8.2.fix1")
+        up_to_date.main("v0.8.2")
     except Exception:
         console.print("检测失败")
 
     # 防止快速退出
-    console.input("\n\n感谢使用，按回车[blue]退出[/blue]程序")
+    console.input("\n\n按回车 [b blue]退出[/b blue] 程序\n")
+    live_exit()

@@ -1,14 +1,15 @@
 import csv
 import datetime
-import sys
+from sys import maxsize
 
 import httpx
 import xlsxwriter
 from rich.progress import track
-from rich.prompt import IntPrompt, Confirm
+from rich.prompt import Confirm, IntPrompt
 
 from . import agent
 from .console import console
+from .live_exit import live_exit
 
 
 # 处理全部礼物数据生成字典以及{uid:name}字典
@@ -113,7 +114,7 @@ class GiftInfo:
             )
             console.print("您查询的日期超出范围的部分数据将[b red]全部为0[/b red]\n")
             if not Confirm.ask("是否确认继续？", console=console):
-                sys.exit(0)
+                live_exit()
 
         while True:
             console.rule("[b]输入查询末尾日期")
@@ -139,7 +140,7 @@ class GiftInfo:
         if date_begin > date_end:
             console.print("\n[bold red]Warning:[/bold red] 开始日期晚于结束日期，将生成空表格\n")
             if not Confirm.ask("是否确认继续？", console=console):
-                sys.exit(0)
+                live_exit()
 
         day_list_range = []
         delta = datetime.timedelta(days=1)
@@ -171,7 +172,7 @@ class GiftInfo:
         ) as async_client:
             for date in track(self.day_list, description="正在抓取礼物信息", console=console):
                 params = {
-                    "limit": sys.maxsize - 1,
+                    "limit": maxsize - 1,
                     "coin_type": 0,
                     "gift_id": "",
                     "begin_time": date,
@@ -189,7 +190,7 @@ class GiftInfo:
                     console.print("[b red]已触发“has_more”[/b red]")
                     params = {
                         "last_id": last_id,
-                        "limit": sys.maxsize - 1,
+                        "limit": maxsize - 1,
                         "coin_type": 0,
                         "gift_id": "",
                         "begin_time": date,

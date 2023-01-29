@@ -8,7 +8,8 @@ dev = [
 
 [tool.pdm.build]
 includes = []
-
+[tool.pdm.scripts]
+start = "python main.py"
 [[tool.pdm.source]]
 name = "tsinghua"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
