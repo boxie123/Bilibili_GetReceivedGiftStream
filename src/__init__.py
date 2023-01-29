@@ -1,4 +1,4 @@
-from . import (
+from . import (  # noqa: F401
     agent,
     console,
     getGift,
