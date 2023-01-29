@@ -166,14 +166,20 @@ def main():
     nowdir = os.getcwd()
     result_file = os.path.join(nowdir, "bzcookies")
     if not os.path.exists(result_file):
-        with open(result_file, "w") as f:
-            f.write("")
+        try:
+            with open(result_file, "w") as f:
+                f.write("")
+        except PermissionError as e:
+            console.print("当前所在文件夹无写入权限，请将本程序移至其他文件夹再打开")
+            console.print(e)
+            console.input("\n按回车退出程序")
     client.cookies = cookielib.LWPCookieJar(filename=result_file)
-    client, status = islogin()
-    if not status:
-        login_with_qrcode()
-
-    return client
+    while True:
+        client, status = islogin()
+        if not status:
+            login_with_qrcode()
+        if status:
+            return client
 
 
 # if __name__ == "__main__":

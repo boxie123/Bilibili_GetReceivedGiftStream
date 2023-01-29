@@ -31,7 +31,7 @@ if __name__ == "__main__":
 `--''           '---'     \   \ .'    |   | ,'   
                            `---`      `----'     
     """,
-            title="本程序图标由 [b bright_magenta]艾鸽泰尔德[/b bright_magenta] 友情赞助",
+            title="本程序美术资源由 [b bright_magenta]艾鸽泰尔德[/b bright_magenta] 友情提供",
             subtitle="UID 1485569",
         )
     )
