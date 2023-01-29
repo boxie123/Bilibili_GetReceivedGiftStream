@@ -5,6 +5,7 @@ import sys
 import httpx
 import xlsxwriter
 from rich.progress import track
+from rich.prompt import IntPrompt, Confirm
 
 from . import agent
 from .console import console
@@ -68,41 +69,31 @@ def guard_info(gifts_list):
     return gift_result, id_index
 
 
-def try_int(num):
-    while True:
-        try:
-            int_num = int(num)
-            break
-        except ValueError:
-            console.print("\n[bold red]Warning:[/bold red] 输入错误，请输入纯数字")
-            num = console.input("请重新输入：")
-    return int_num
-
-
 class GiftInfo:
     # 构造函数，生成特定格式的日期列表
-    def __init__(self, client):
+    def __init__(self, client: httpx.Client):
         self.cookies = client.cookies
         client.close()
+        ask_list = ["年份", "月份", "日期"]
+        datetime_today = datetime.datetime.today()
+        today_date_list = [
+            datetime_today.year,
+            datetime_today.month,
+            datetime_today.day,
+        ]
         while True:
-            console.rule("输入查询开始日期")
-            year_begin = console.input("请输入想查询的开始[b blue]年份[/b blue]（四位纯数字）（直接回车默认今年）：")
-            if year_begin == "":
-                self.year_begin = datetime.datetime.today().year
-            else:
-                self.year_begin = try_int(year_begin)
+            console.rule("[b]输入查询开始日期")
 
-            month_begin = console.input("请输入想查询的开始[b blue]月份[/b blue]（直接回车默认本月）：")
-            if month_begin == "":
-                self.month_begin = datetime.datetime.today().month
-            else:
-                self.month_begin = try_int(month_begin)
+            begin_date_list = [0 for _ in range(3)]
+            for i in range(3):
+                ask = "请输入想查询的开始[b blue]{}[/b blue]".format(ask_list[i])
+                begin_date_list[i] = IntPrompt.ask(
+                    ask,
+                    console=console,
+                    default=today_date_list[i],
+                )
 
-            day_begin = console.input("请输入想查询的开始[b blue]日期[/b blue]（直接回车默认今日）：")
-            if day_begin == "":
-                self.day_begin = datetime.datetime.today().day
-            else:
-                self.day_begin = try_int(day_begin)
+            self.year_begin, self.month_begin, self.day_begin = begin_date_list
 
             try:
                 date_begin = datetime.date(
@@ -121,30 +112,22 @@ class GiftInfo:
                 )
             )
             console.print("您查询的日期超出范围的部分数据将[b red]全部为0[/b red]\n")
-            while True:
-                choice = console.input("输入[b blue]y[/b blue]确认继续：")
-                if choice == "y" or choice == "Y":
-                    break
+            if not Confirm.ask("是否确认继续？", console=console):
+                sys.exit(0)
 
         while True:
-            console.rule("输入查询末尾日期")
-            year_end = console.input("请输入想查询的结束[b blue]年份[/b blue]（四位纯数字）（直接回车默认今年）：")
-            if year_end == "":
-                self.year_end = datetime.datetime.today().year
-            else:
-                self.year_end = try_int(year_end)
+            console.rule("[b]输入查询末尾日期")
 
-            month_end = console.input("请输入想查询的结束[b blue]月份[/b blue]（直接回车默认本月）：")
-            if month_end == "":
-                self.month_end = datetime.datetime.today().month
-            else:
-                self.month_end = try_int(month_end)
+            end_date_list = [0 for _ in range(3)]
+            for i in range(3):
+                ask = "请输入想查询的末尾[b blue]{}[/b blue]".format(ask_list[i])
+                end_date_list[i] = IntPrompt.ask(
+                    ask,
+                    console=console,
+                    default=today_date_list[i],
+                )
 
-            day_end = console.input("请输入想查询的结束[b blue]日期[/b blue]（直接回车默认今日）：")
-            if day_end == "":
-                self.day_end = datetime.datetime.today().day
-            else:
-                self.day_end = try_int(day_end)
+            self.year_end, self.month_end, self.day_end = end_date_list
 
             try:
                 date_end = datetime.date(self.year_end, self.month_end, self.day_end)
@@ -155,10 +138,8 @@ class GiftInfo:
 
         if date_begin > date_end:
             console.print("\n[bold red]Warning:[/bold red] 开始日期晚于结束日期，将生成空表格\n")
-            while True:
-                choice = console.input("输入0确认继续：")
-                if choice == "0":
-                    break
+            if not Confirm.ask("是否确认继续？", console=console):
+                sys.exit(0)
 
         day_list_range = []
         delta = datetime.timedelta(days=1)

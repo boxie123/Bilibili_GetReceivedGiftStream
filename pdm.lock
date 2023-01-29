@@ -243,7 +243,7 @@ dependencies = [
 
 [[package]]
 name = "setuptools"
-version = "66.1.1"
+version = "67.0.0"
 requires_python = ">=3.7"
 summary = "Easily download, build, install, upgrade, and uninstall Python packages"
 
@@ -267,7 +267,7 @@ summary = "A Python module for creating Excel XLSX files."
 
 [metadata]
 lock_version = "4.1"
-content_hash = "sha256:66c3d1a0a41628e4e83035daeed082587ab242670834fc7f783b8973e4f5eb4c"
+content_hash = "sha256:28d7ebb4f9908f58454108f480b5f21e9ee1304a3d93653a13b93ef1f5263538"
 
 [metadata.files]
 "altgraph 0.17.3" = [
@@ -482,9 +482,9 @@ content_hash = "sha256:66c3d1a0a41628e4e83035daeed082587ab242670834fc7f783b8973e
     {url = "https://pypi.tuna.tsinghua.edu.cn/packages/68/31/b8934896818c885001aeb7df388ba0523ea3ec88ad31805983d9b0480a50/rich-13.3.1.tar.gz", hash = "sha256:125d96d20c92b946b983d0d392b84ff945461e5a06d3867e9f9e575f8697b67f"},
     {url = "https://pypi.tuna.tsinghua.edu.cn/packages/a8/c6/14b77fe7a5fab66ffbeffd6706f598d00a52702846bce0e2339bcf9dd20c/rich-13.3.1-py3-none-any.whl", hash = "sha256:8aa57747f3fc3e977684f0176a88e789be314a99f99b43b75d1e9cb5dc6db9e9"},
 ]
-"setuptools 66.1.1" = [
-    {url = "https://pypi.tuna.tsinghua.edu.cn/packages/3c/7b/00030a938499c8f8345be02ab5b7d748d359ea59c2f020b7b0a21b82f832/setuptools-66.1.1.tar.gz", hash = "sha256:ac4008d396bc9cd983ea483cb7139c0240a07bbc74ffb6232fceffedc6cf03a8"},
-    {url = "https://pypi.tuna.tsinghua.edu.cn/packages/c2/8b/abb577ca6ab2c71814d535b1ed1464c5f4aaefe1a31bbeb85013eb9b2401/setuptools-66.1.1-py3-none-any.whl", hash = "sha256:6f590d76b713d5de4e49fe4fbca24474469f53c83632d5d0fd056f7ff7e8112b"},
+"setuptools 67.0.0" = [
+    {url = "https://pypi.tuna.tsinghua.edu.cn/packages/bf/27/969c914650fdf0d08b0b92bdbddfc08bea9df6d86aeefd75ba4730f50bc9/setuptools-67.0.0-py3-none-any.whl", hash = "sha256:9d790961ba6219e9ff7d9557622d2fe136816a264dd01d5997cfc057d804853d"},
+    {url = "https://pypi.tuna.tsinghua.edu.cn/packages/fe/db/68d856066c59bd9f05e827c3cf80164d870b8b6af37dc5ad6c87a71d20f2/setuptools-67.0.0.tar.gz", hash = "sha256:883131c5b6efa70b9101c7ef30b2b7b780a4283d5fc1616383cdf22c83cbefe6"},
 ]
 "sniffio 1.3.0" = [
     {url = "https://pypi.tuna.tsinghua.edu.cn/packages/c3/a0/5dba8ed157b0136607c7f2151db695885606968d1fae123dc3391e0cfdbf/sniffio-1.3.0-py3-none-any.whl", hash = "sha256:eecefdce1e5bbfb7ad2eeaabf7c1eeb404d7757c379bd1f7e5cce9d8bf425384"},

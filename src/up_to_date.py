@@ -5,7 +5,7 @@ from .console import console
 
 def main(now_tag):
     console.print("\n\n")
-    console.rule("检测更新")
+    console.rule("[b]检测更新", characters="=")
     header = {"accept": "application/vnd.github.v3+json"}
     url = (
         "https://api.github.com/repos/boxie123/Bilibili_GetReceivedGiftStream/releases"

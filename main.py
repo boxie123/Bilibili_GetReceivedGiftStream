@@ -5,11 +5,7 @@ from rich.panel import Panel
 from rich.prompt import Prompt
 from rich.tree import Tree
 
-from src import (
-    getGift,
-    login,
-    up_to_date,
-)
+from src import getGift, login, up_to_date
 from src.console import console
 
 if __name__ == "__main__":
@@ -37,26 +33,28 @@ if __name__ == "__main__":
     )
     client = login.main()
 
+    function_dict = {
+        0: "退出",
+        1: "生成[b green]大航海[/b green]信息记录（[b blue]xlsx[/b blue]格式）",
+        2: "生成可直接导入 [b green]BiliMessenger[/b green] 使用的大航海数据列表（[b blue]csv[/b blue]格式）",
+        3: "生成[b green]所有礼物流水[/b green]列表（[b blue]xlsx[/b blue]格式）",
+        4: "同时生成[b yellow]上述三个[/b yellow]文件",
+    }
+
     # 询问用户使用什么功能
     console.print("\n本程序目前拥有的功能：\n")
-    function_list = Tree("[b]功能列表[/b]")
-    function_list.add("[[b blue]0[/b blue]] 退出")
-    function_list.add(
-        "[[b blue]1[/b blue]] 生成[b green]大航海[/b green]信息记录（[b blue]xlsx[/b blue]格式）"
-    )
-    function_list.add(
-        "[[b blue]2[/b blue]] 生成可直接导入 [b green]BiliMessenger[/b green] 使用的大航海数据列表（[b blue]csv[/b blue]格式）"
-    )
-    function_list.add(
-        "[[b blue]3[/b blue]] 生成[b green]所有礼物流水[/b green]列表（[b blue]xlsx[/b blue]格式）"
-    )
-    function_list.add("[[b blue]4[/b blue]] 同时生成[b yellow]上述三个[/b yellow]文件")
-    console.print(function_list)
+
+    function_list_tree = Tree("[b]功能列表[/b]")
+    for key, values in function_dict.items():
+        function_list_tree.add(f"[b][[cyan]{key}[/cyan]][/b] {values}")
+    console.print(function_list_tree)
+
     console.print("之后会要求您输入想要查询的日期区间（[b red]闭区间[/b red]，统计结果包含开始和结束日期的礼物数据）")
+    console.print("\n[i]下列所有问题直接回车将默认为 [b cyan]括号中[/b cyan] 结果[/i]")
 
     choice = Prompt.ask(
         "\n请输入[b blue]相应数字[/b blue]来使用相对应的功能：",
-        choices=["0", "1", "2", "3", "4"],
+        choices=[str(key) for key in function_dict.keys()],
         default="4",
     )
     if choice == "0":
@@ -64,12 +62,12 @@ if __name__ == "__main__":
 
     # 使用功能
     gift_info = getGift.GiftInfo(client)
-    console.rule("获取礼物信息")
+    console.rule("[b]获取礼物信息", characters="=")
     asyncio.run(gift_info.main(choice))
 
     # 检测更新
     try:
-        up_to_date.main("v0.8.2")
+        up_to_date.main("v0.8.2.fix1")
     except Exception:
         console.print("检测失败")
 

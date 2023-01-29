@@ -21,20 +21,16 @@ build-backend = "pdm.pep517.api"
 authors = [
     {name = "铂屑", email = "platinumshard@outlook.com"},
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.12"
 dependencies = [
     "qrcode>=7.3.1",
     "Pillow>=9.4.0",
     "httpx>=0.23.3",
     "xlsxwriter>=3.0.7",
-    "qrcode<8.0.0,>=7.3.1",
-    "Pillow<10.0.0,>=9.2.0",
-    "httpx<1.0.0,>=0.23.0",
-    "xlsxwriter<4.0.0,>=3.0.7",
     "rich>=13.3.1",
 ]
 name = "bilibili_getreceivedgiftstream"
-version = "0.8.0"
+version = "0.8.2.fix1"
 description = "登录并获取bilibili账号某段时间礼物流水"
 license = {text = "MIT"}
 
