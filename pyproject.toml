@@ -21,7 +21,7 @@ build-backend = "pdm.pep517.api"
 authors = [
     {name = "铂屑", email = "platinumshard@outlook.com"},
 ]
-requires-python = ">=3.10.9,<3.11"
+requires-python = ">=3.10"
 dependencies = [
     "qrcode>=7.3.1",
     "Pillow>=9.4.0",
