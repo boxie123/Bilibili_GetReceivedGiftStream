@@ -1,6 +1,6 @@
 import httpx
 
-from console import console
+from .console import console
 
 
 def main(now_tag):

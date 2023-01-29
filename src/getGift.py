@@ -6,8 +6,8 @@ import httpx
 import xlsxwriter
 from rich.progress import track
 
-import agent
-from console import console
+from . import agent
+from .console import console
 
 
 # 处理全部礼物数据生成字典以及{uid:name}字典
