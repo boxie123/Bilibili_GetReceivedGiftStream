@@ -153,6 +153,7 @@ cython_debug/
 
 # My
 bzcookies.txt
+bzcookies
 *.xls
 *.csv
 *.ico

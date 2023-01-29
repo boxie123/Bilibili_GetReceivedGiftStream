@@ -62,7 +62,7 @@ def islogin():
     try:
         client.cookies.jar.load(ignore_discard=True)
     except Exception:
-        console.print("[b green]bzcookies.txt[/b green] 载入失败")
+        console.print("[b green]bzcookies[/b green] 载入失败")
     loginurl = client.get(
         "https://api.bilibili.com/x/web-interface/nav", headers=headers
     ).json()
@@ -164,7 +164,7 @@ def main():
     global client
 
     nowdir = os.getcwd()
-    result_file = os.path.join(nowdir, "bzcookies.txt")
+    result_file = os.path.join(nowdir, "bzcookies")
     if not os.path.exists(result_file):
         with open(result_file, "w") as f:
             f.write("")
