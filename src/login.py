@@ -15,13 +15,13 @@ from .console import console
 API = {
     "qrcode": {
         "get_qrcode_and_token": {
-            "url": "http://passport.bilibili.com/qrcode/getLoginUrl",
+            "url": "https://passport.bilibili.com/qrcode/getLoginUrl",
             "method": "GET",
             "verify": False,
             "comment": "请求二维码及登录密钥",
         },
         "get_events": {
-            "url": "http://passport.bilibili.com/qrcode/getLoginInfo",
+            "url": "https://passport.bilibili.com/qrcode/getLoginInfo",
             "method": "POST",
             "verify": False,
             "data": {"oauthKey": "str: 登陆密钥"},
@@ -110,11 +110,17 @@ def login_with_qrcode():
         global id_
         global is_destroy, client
         events_api = API["qrcode"]["get_events"]
-        events = client.post(
-            events_api["url"],
-            data={"oauthKey": login_key, "gourl": "https://www.bilibili.com/"},
-            headers=headerss,
-        ).json()
+        try:
+            events = client.post(
+                events_api["url"],
+                data={"oauthKey": login_key},
+                headers=headerss,
+            ).json()
+        except json.decoder.JSONDecodeError:
+            console.print("[b green]更新状态失败[/b green] 正在重试")
+            id_ = root.after(500, update_events)
+            root.update()
+            return
         if "code" in events.keys() and events["code"] == -412:
             raise Exception(events["message"])
         if events["data"] == -4:

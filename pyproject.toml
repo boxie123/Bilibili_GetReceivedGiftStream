@@ -1,38 +1,28 @@
-[tool.pdm]
-[tool.pdm.dev-dependencies]
-dev = [
-    "flake8>=6.0.0",
-    "black>=22.12.0",
-    "pyinstaller>=5.7.0",
-]
+[tool.poetry]
+name = "bilibili-getreceivedgiftstream"
+version = "0.1.0"
+description = ""
+authors = ["铂屑 <80164656+boxie123@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "bilibili_getreceivedgiftstream"}]
 
-[tool.pdm.build]
-includes = []
-[tool.pdm.scripts]
-start = "python main.py"
-[[tool.pdm.source]]
+[tool.poetry.dependencies]
+python = "~3.10.6"
+qrcode = "^7.4.2"
+pillow = "^9.5.0"
+httpx = "^0.24.0"
+xlsxwriter = "^3.1.0"
+rich = "^13.3.5"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^5.0.4"
+black = {version = "^22.6.0", allow-prereleases = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[[tool.poetry.source]]
 name = "tsinghua"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
-verify_ssl = false
-[build-system]
-requires = ["pdm-pep517>=1.0.0"]
-build-backend = "pdm.pep517.api"
-
-[project]
-authors = [
-    {name = "铂屑", email = "platinumshard@outlook.com"},
-]
-requires-python = ">=3.10,<3.12"
-dependencies = [
-    "qrcode>=7.3.1",
-    "Pillow>=9.4.0",
-    "httpx>=0.23.3",
-    "xlsxwriter>=3.0.7",
-    "rich>=13.3.1",
-]
-name = "bilibili_getreceivedgiftstream"
-version = "0.8.2.fix1"
-description = "登录并获取bilibili账号某段时间礼物流水"
-license = {text = "MIT"}
-
-[project.urls]
+default = true
