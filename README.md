@@ -1,6 +1,6 @@
-[![Bilibili_GetReceivedGiftStream](https://user-images.githubusercontent.com/74038190/212747903-e9bdf048-2dc8-41f9-b973-0e72ff07bfba.gif)](https://boxie123.github.io/Bilibili-GetReceivedGiftStream/)
-
 <div align="center">
+
+[![Bilibili_GetReceivedGiftStream](https://user-images.githubusercontent.com/74038190/212747903-e9bdf048-2dc8-41f9-b973-0e72ff07bfba.gif)](https://boxie123.github.io/Bilibili-GetReceivedGiftStream/)
 
 # Bilibili_GetReceivedGiftStream
 
