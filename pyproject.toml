@@ -9,7 +9,7 @@ packages = [{include = "bilibili_getreceivedgiftstream"}]
 [tool.poetry.dependencies]
 python = "~3.10.6"
 qrcode = "^7.4.2"
-pillow = "^9.5.0"
+pillow = "^10.0.1"
 httpx = "^0.24.0"
 xlsxwriter = "^3.1.0"
 rich = "^13.3.5"
