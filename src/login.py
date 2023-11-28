@@ -15,16 +15,16 @@ from .console import console
 API = {
     "qrcode": {
         "get_qrcode_and_token": {
-            "url": "https://passport.bilibili.com/qrcode/getLoginUrl",
+            "url": "https://passport.bilibili.com/x/passport-login/web/qrcode/generate",
             "method": "GET",
             "verify": False,
             "comment": "请求二维码及登录密钥",
         },
         "get_events": {
-            "url": "https://passport.bilibili.com/qrcode/getLoginInfo",
-            "method": "POST",
+            "url": "https://passport.bilibili.com/x/passport-login/web/qrcode/poll",
+            "method": "GET",
             "verify": False,
-            "data": {"oauthKey": "str: 登陆密钥"},
+            "data": {"qrcode_key": "str: 登陆密钥"},
             "comment": "获取最新信息",
         },
     }
@@ -111,9 +111,9 @@ def login_with_qrcode():
         global is_destroy, client
         events_api = API["qrcode"]["get_events"]
         try:
-            events = client.post(
+            events = client.get(
                 events_api["url"],
-                data={"oauthKey": login_key},
+                params={"qrcode_key": login_key},
                 headers=headerss,
             ).json()
         except json.decoder.JSONDecodeError:
@@ -123,11 +123,11 @@ def login_with_qrcode():
             return
         if "code" in events.keys() and events["code"] == -412:
             raise Exception(events["message"])
-        if events["data"] == -4:
+        if events["data"]["code"] == 86101:
             log.configure(text="二维码未失效，请扫码！", fg="red", font=big_font)
-        elif events["data"] == -5:
+        elif events["data"]["code"] == 86090:
             log.configure(text="已扫码，请确认！", fg="orange", font=big_font)
-        elif events["data"] == -2:
+        elif events["data"]["code"] == 86038:
             update_qrcode()
             log.configure(text="二维码已刷新，请重新扫码", fg="blue", font=big_font)
         elif isinstance(events["data"], dict):
@@ -160,7 +160,7 @@ def update_qrcode() -> str:
     global login_key, qrcode_image, client
     api = API["qrcode"]["get_qrcode_and_token"]
     qrcode_login_data = json.loads(client.get(api["url"]).text)["data"]
-    login_key = qrcode_login_data["oauthKey"]
+    login_key = qrcode_login_data["qrcode_key"]
     qrcode = qrcode_login_data["url"]
     qrcode_image = make_qrcode(qrcode)
     return qrcode_image

@@ -7,12 +7,13 @@ readme = "README.md"
 packages = [{include = "bilibili_getreceivedgiftstream"}]
 
 [tool.poetry.dependencies]
-python = "~3.10.6"
+python = "~3.11.4"
 qrcode = "^7.4.2"
 pillow = "^9.5.0"
 httpx = "^0.24.0"
 xlsxwriter = "^3.1.0"
 rich = "^13.3.5"
+pyinstaller = "^5.10.1"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^5.0.4"
@@ -21,8 +22,3 @@ black = {version = "^22.6.0", allow-prereleases = true}
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[[tool.poetry.source]]
-name = "tsinghua"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
-default = true
