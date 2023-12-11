@@ -159,7 +159,7 @@ def update_qrcode() -> str:
     """
     global login_key, qrcode_image, client
     api = API["qrcode"]["get_qrcode_and_token"]
-    qrcode_login_data = json.loads(client.get(api["url"]).text)["data"]
+    qrcode_login_data = json.loads(client.get(api["url"], headers=headers).text)["data"]
     login_key = qrcode_login_data["qrcode_key"]
     qrcode = qrcode_login_data["url"]
     qrcode_image = make_qrcode(qrcode)
