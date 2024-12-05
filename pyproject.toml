@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["铂屑 <80164656+boxie123@users.noreply.github.com>"]
 readme = "README.md"
-packages = [{include = "bilibili_getreceivedgiftstream"}]
+packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
 python = "~3.11.4"
